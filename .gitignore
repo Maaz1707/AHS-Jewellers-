@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+build
+*.tsbuildinfo
+next-env.d.ts
+.env*.local
+.DS_Store
+public/mediapipe/wasm
+
+# Design review working files (keep only the comparison images)
+design-review/*
+!design-review/compare-*.jpg

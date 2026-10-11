@@ -1,0 +1,661 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   AHS Jewellers — design tokens
+   Default Tailwind scales are reset. Use only the tokens below.
+   ========================================================================== */
+
+@theme {
+  /* Colour */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-ivory: #faf7f2;
+  --color-ivory-deep: #f2ece2;
+  --color-ink: #1a1714;
+  --color-ink-soft: #3d3731;
+  --color-stone: #6b635a;
+  --color-gold: #b08d57;
+  --color-gold-deep: #86663a;
+  --color-gold-pale: #e8dbc4;
+  /* Data marks only: a richer gold that passes the chart chroma and contrast checks. */
+  --color-chart: #9a6a1e;
+  --color-line: #e8e2d9;
+  --color-line-strong: #d4cbbe;
+  --color-success: #4a6545;
+  --color-error: #9a3a2e;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Type scale (font-size / line-height) */
+  --text-*: initial;
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.4;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.6;
+  --text-base: 1rem;
+  --text-base--line-height: 1.7;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.65;
+  --text-xl: 1.375rem;
+  --text-xl--line-height: 1.4;
+  --text-2xl: 1.75rem;
+  --text-2xl--line-height: 1.22;
+  --text-3xl: 2.25rem;
+  --text-3xl--line-height: 1.12;
+  --text-4xl: 3rem;
+  --text-4xl--line-height: 1.06;
+  --text-5xl: 4rem;
+  --text-5xl--line-height: 1.02;
+  --text-6xl: 5.25rem;
+  --text-6xl--line-height: 0.98;
+  --text-7xl: 7rem;
+  --text-7xl--line-height: 0.94;
+
+  --tracking-*: initial;
+  --tracking-tight: -0.015em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.06em;
+  --tracking-label: 0.22em;
+  --tracking-logo: 0.34em;
+
+  --leading-*: initial;
+  --leading-none: 1;
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.8;
+
+  --font-weight-*: initial;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Spacing scale (4px base, stepped) */
+  --spacing: initial;
+  --spacing-*: initial;
+  --spacing-0: 0px;
+  --spacing-px: 1px;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-14: 3.5rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-28: 7rem;
+  --spacing-32: 8rem;
+  --spacing-40: 10rem;
+  --spacing-48: 12rem;
+  --spacing-64: 16rem;
+  --spacing-80: 20rem;
+  --spacing-96: 24rem;
+
+  /* Measures */
+  --container-*: initial;
+  --container-label: 14rem;
+  --container-prose: 34rem;
+  --container-narrow: 46rem;
+  --container-content: 80rem;
+  --container-shell: 96rem;
+
+  --radius-*: initial;
+  --radius-none: 0px;
+  --radius-full: 9999px;
+
+  --shadow-*: initial;
+  --shadow-soft: 0 24px 48px -28px rgb(26 23 20 / 0.22);
+  --shadow-panel: 0 40px 80px -40px rgb(26 23 20 / 0.28);
+
+  --aspect-portrait: 4 / 5;
+  --aspect-tall: 3 / 4;
+  --aspect-slim: 2 / 3;
+  --aspect-landscape: 3 / 2;
+  --aspect-wide: 16 / 9;
+
+  /* Motion: one curve (luxe) for almost everything; curtain only for the page transition.
+     Durations: 300ms colour and border, 500ms interface, 700ms image cross-fades, 1000ms image zoom. */
+  --default-transition-duration: 500ms;
+  --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-*: initial;
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-curtain: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --animate-*: initial;
+  --animate-cue: cue 2.4s var(--ease-curtain) 3;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-breathe: breathe 1.8s var(--ease-soft) infinite;
+
+  @keyframes cue {
+    0% { transform: scaleY(0); transform-origin: top; }
+    45% { transform: scaleY(1); transform-origin: top; }
+    55% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 1; }
+  }
+}
+
+@theme inline {
+  --font-*: initial;
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+@utility shell {
+  width: 100%;
+  max-width: var(--container-shell);
+  margin-inline: auto;
+  padding-inline: var(--spacing-5);
+  @variant md {
+    padding-inline: var(--spacing-10);
+  }
+  @variant xl {
+    padding-inline: var(--spacing-16);
+  }
+}
+
+/* Small uppercase label that sits above headings */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-micro);
+  line-height: var(--text-micro--line-height);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* Underline that draws in from the left on hover / focus */
+@utility link-draw {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  background-position: 100% 100%;
+  transition: background-size 0.6s var(--ease-luxe);
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+    background-position: 0% 100%;
+  }
+}
+
+/* Underline present by default that retracts and redraws on hover */
+@utility link-line {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 0% 100%;
+  transition: background-size 0.6s var(--ease-luxe);
+  &:hover,
+  &:focus-visible {
+    animation: redraw 0.8s var(--ease-luxe);
+  }
+}
+
+/* Layout sizes for the horizontal collections showcase (viewport-relative by design). */
+@utility showcase-intro {
+  width: 80vw;
+  @variant md { width: 44vw; }
+  @variant lg { width: 30vw; }
+}
+@utility showcase-card {
+  width: 78vw;
+  @variant md { width: 44vw; }
+  @variant lg { width: 34vw; }
+  @variant xl { width: 30vw; }
+}
+@utility showcase-frame {
+  aspect-ratio: var(--aspect-tall);
+  @variant lg {
+    aspect-ratio: auto;
+    height: 62vh;
+  }
+}
+@utility showcase-end {
+  width: 1px;
+  @variant lg { width: 8vw; }
+}
+@utility drift-bleed {
+  left: -8%;
+  right: -8%;
+}
+
+/* Tall image frame that fills the viewport beside sticky text on desktop. */
+@utility viewport-frame {
+  @variant lg {
+    aspect-ratio: auto;
+    height: calc(100svh - 10rem);
+  }
+}
+
+@utility skeleton {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-ivory-deep) 0%,
+    var(--color-ivory) 50%,
+    var(--color-ivory-deep) 100%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/*
+ * Headline sizes. Three, used everywhere:
+ * display-hero    full-bleed film or photograph openings (home, collections, craft, our story)
+ * display-page    every other page opening, split or header
+ * display-section section headings below the opening
+ */
+@utility display-hero {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-light);
+  letter-spacing: -0.02em;
+  font-size: var(--text-4xl);
+  line-height: var(--text-4xl--line-height);
+  @variant md {
+    font-size: var(--text-6xl);
+    line-height: var(--text-6xl--line-height);
+  }
+  @variant xl {
+    font-size: var(--text-7xl);
+    line-height: var(--text-7xl--line-height);
+  }
+}
+@utility display-page {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-light);
+  letter-spacing: -0.015em;
+  font-size: var(--text-4xl);
+  line-height: var(--text-4xl--line-height);
+  @variant md {
+    font-size: var(--text-5xl);
+    line-height: var(--text-5xl--line-height);
+  }
+  @variant lg {
+    font-size: var(--text-6xl);
+    line-height: var(--text-6xl--line-height);
+  }
+}
+@utility display-section {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-light);
+  letter-spacing: -0.01em;
+  font-size: var(--text-3xl);
+  line-height: var(--text-3xl--line-height);
+  @variant md {
+    font-size: var(--text-4xl);
+    line-height: var(--text-4xl--line-height);
+  }
+  @variant xl {
+    font-size: var(--text-5xl);
+    line-height: var(--text-5xl--line-height);
+  }
+}
+/* Opening paragraph under a page headline. */
+@utility lede {
+  max-width: var(--container-prose);
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  @variant md {
+    font-size: var(--text-lg);
+    line-height: var(--text-lg--line-height);
+  }
+}
+
+/* Prices, rates and weights: lining, tabular figures so columns align (Cormorant defaults to old-style). */
+@utility figures {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* Quick-choice chips (amounts, presets). aria-pressed marks the chosen one. 48px tall on phones. */
+@utility chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--spacing-12);
+  padding-inline: var(--spacing-2);
+  border: 1px solid var(--color-line-strong);
+  font-size: var(--text-sm);
+  color: var(--color-ink-soft);
+  font-variant-numeric: lining-nums tabular-nums;
+  white-space: nowrap;
+  transition: color 0.3s var(--ease-luxe), background-color 0.3s var(--ease-luxe), border-color 0.3s var(--ease-luxe);
+  &:hover {
+    border-color: var(--color-ink);
+    color: var(--color-ink);
+  }
+  &[aria-pressed="true"] {
+    border-color: var(--color-ink);
+    background-color: var(--color-ink);
+    color: var(--color-white);
+  }
+  @variant md {
+    height: var(--spacing-10);
+  }
+}
+
+/* Small icon buttons keep their look but get a larger touch target. The element must be positioned. */
+@utility hit-area {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -0.25rem;
+  }
+}
+
+/* Vertical rhythm. Every page opening and every content section uses one of these. */
+@utility hero-y {
+  padding-top: var(--spacing-10);
+  padding-bottom: var(--spacing-16);
+  @variant md {
+    padding-top: var(--spacing-16);
+    padding-bottom: var(--spacing-24);
+  }
+}
+@utility section-y {
+  padding-block: var(--spacing-20);
+  @variant md {
+    padding-block: var(--spacing-32);
+  }
+}
+/* Single-section pages (bag, checkout, account): an opening plus content. */
+@utility page-y {
+  padding-top: var(--spacing-10);
+  padding-bottom: var(--spacing-20);
+  @variant md {
+    padding-top: var(--spacing-16);
+    padding-bottom: var(--spacing-32);
+  }
+}
+/* Short bands: calls to action, rate strips, closing notes. */
+@utility band-y {
+  padding-block: var(--spacing-16);
+  @variant md {
+    padding-block: var(--spacing-24);
+  }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Range slider: hairline track with a gold fill up to the thumb (--fill set inline). */
+.range {
+  appearance: none;
+  height: 1.5rem;
+  background: transparent;
+  cursor: pointer;
+}
+.range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: linear-gradient(to right, var(--color-gold) var(--fill, 0%), var(--color-line-strong) var(--fill, 0%));
+}
+.range::-moz-range-track {
+  height: 1px;
+  background: var(--color-line-strong);
+}
+.range::-moz-range-progress {
+  height: 1px;
+  background: var(--color-gold);
+}
+.range::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: -0.625rem;
+  border-radius: 9999px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gold-deep);
+  box-shadow: 0 0 0 4px var(--color-ivory);
+  transition: transform 0.3s var(--ease-luxe);
+}
+.range::-moz-range-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gold-deep);
+}
+.range:hover::-webkit-slider-thumb,
+.range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+.range:focus-visible {
+  outline-offset: 6px;
+}
+
+/* Installed-app mode: a bottom tab bar on phones and tablets. Fixed elements sit above it. */
+:root {
+  --app-bar: 0px;
+}
+@media (max-width: 1023.98px) {
+  html[data-app="true"] {
+    --app-bar: calc(4rem + env(safe-area-inset-bottom));
+  }
+  html[data-app="true"] body {
+    padding-bottom: var(--app-bar);
+  }
+}
+
+/* Floating action button offset (WhatsApp), clear of the app bar. */
+@utility fab-offset {
+  bottom: calc(var(--app-bar) + var(--spacing-5));
+  right: var(--spacing-5);
+  @variant md {
+    bottom: calc(var(--app-bar) + var(--spacing-8));
+    right: var(--spacing-8);
+  }
+}
+
+/* Bars pinned to the foot of the screen (product enquiry bar, prompts). */
+@utility foot-offset {
+  bottom: var(--app-bar);
+}
+
+/* Dual range: two inputs share one track; only their thumbs take the pointer. */
+.range-dual {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+}
+.range-dual::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 1.5rem;
+}
+.range-dual::-moz-range-track {
+  background: transparent;
+}
+.range-dual::-webkit-slider-thumb {
+  appearance: none;
+  pointer-events: auto;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.1875rem;
+  border-radius: 9999px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gold-deep);
+  cursor: grab;
+  transition: transform 0.3s var(--ease-luxe);
+}
+.range-dual::-moz-range-thumb {
+  pointer-events: auto;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 9999px;
+  background: var(--color-white);
+  border: 1px solid var(--color-gold-deep);
+  cursor: grab;
+}
+.range-dual:focus-visible {
+  outline: none;
+}
+.range-dual:focus-visible::-webkit-slider-thumb {
+  outline: 1px solid var(--color-gold-deep);
+  outline-offset: 3px;
+}
+.range-dual:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+  cursor: grabbing;
+}
+
+/* Review slider: the active segment fills over the auto-advance interval. */
+.review-progress {
+  transform: scaleX(0);
+  animation: review-fill 7s linear forwards;
+}
+@keyframes review-fill {
+  to { transform: scaleX(1); }
+}
+
+/* SplitText line masks: give serif descenders and accents room inside the clip. */
+.rl-mask {
+  padding-block: 0.08em 0.14em;
+  margin-block: -0.08em -0.14em;
+}
+
+/* Home hero words: CSS, not script, so they appear as soon as the page paints. */
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-fade {
+    animation: hero-in 1.2s var(--ease-luxe) var(--d, 0s) both;
+  }
+}
+
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes redraw {
+  0% { background-size: 100% 1px; background-position: 100% 100%; }
+  49% { background-size: 0% 1px; background-position: 100% 100%; }
+  50% { background-size: 0% 1px; background-position: 0% 100%; }
+  100% { background-size: 100% 1px; background-position: 0% 100%; }
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-white);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Lining figures everywhere: Cormorant's default old-style numerals make prices and rates uneven. */
+    font-variant-numeric: lining-nums;
+    /* Safety net against stray horizontal scroll on phones. clip, unlike hidden, keeps sticky elements working. */
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background-color: var(--color-gold-pale);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-gold-deep);
+    outline-offset: 4px;
+  }
+
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  /* Headlines wrap in balanced lines; paragraphs avoid a single word on the last line. */
+  h1,
+  h2,
+  h3,
+  h4,
+  blockquote {
+    text-wrap: balance;
+  }
+  p,
+  li,
+  dd,
+  figcaption {
+    text-wrap: pretty;
+  }
+
+  /*
+   * One photographic grade for every stock source: a touch warmer, a little less
+   * saturated, a little more contrast. Images sit on a warm tone while loading,
+   * never on blank white.
+   */
+  img[data-nimg] {
+    background-color: var(--color-ivory-deep);
+  }
+  img[data-nimg]:not([data-raw]) {
+    filter: saturate(0.9) contrast(1.04) sepia(0.06) brightness(1.01);
+  }
+
+  /* Phones: nothing a customer reads is smaller than 14px; tracked capitals stay at 12px. */
+  @media (max-width: 767.98px) {
+    :root {
+      --text-xs: 0.875rem;
+      --text-xs--line-height: 1.55;
+      --text-micro: 0.75rem;
+    }
+  }
+
+  /* Elements that GSAP reveals start hidden only when motion is welcome. */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      visibility: hidden;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
