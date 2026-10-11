@@ -7,6 +7,7 @@ import { prefersReducedMotion } from "@/lib/motion";
 import Button from "../ui/Button";
 import RevealText from "../ui/RevealText";
 import VideoBlock from "../ui/VideoBlock";
+import IntroCurtain from "./IntroCurtain";
 
 export default function Hero() {
   const section = useRef<HTMLElement>(null);
@@ -31,6 +32,8 @@ export default function Hero() {
   );
 
   return (
+    <>
+    <IntroCurtain />
     <section ref={section} aria-label="Introduction" className="relative h-svh overflow-hidden bg-ink text-white" style={{ minHeight: "36rem" }}>
       <div data-hero-parallax="" className="absolute inset-0">
         <div data-hero-media="" className="absolute inset-0">
@@ -81,5 +84,6 @@ export default function Hero() {
         </span>
       </div>
     </section>
+    </>
   );
 }

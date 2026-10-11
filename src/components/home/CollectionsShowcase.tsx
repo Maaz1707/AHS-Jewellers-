@@ -106,6 +106,7 @@ export default function CollectionsShowcase() {
               <Link
                 key={c.slug}
                 href={`/collections/${c.slug}`}
+                data-cursor="View"
                 className={`group showcase-card relative flex shrink-0 snap-start flex-col ${
                   i % 2 === 1 ? "lg:mt-24" : "lg:-mt-24"
                 }`}

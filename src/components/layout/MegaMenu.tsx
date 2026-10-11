@@ -19,7 +19,9 @@ export default function MegaMenu({ item, id, onNavigate }: { item: MainNavItem; 
   const countIn = (slug: string) => visible.filter((p) => p.collection === slug).length;
 
   return (
-    <div id={id} className="shell grid grid-cols-12 gap-10 py-12 xl:gap-16">
+    <div id={id} className="shell relative grid grid-cols-12 gap-10 py-12 xl:gap-16">
+      {/* The house jaali, faint, in the corner of the panel. */}
+      <div aria-hidden="true" className="bg-jaali jaali-fade pointer-events-none absolute -bottom-16 left-1/3 size-80 opacity-30" />
       {item.key === "collections" ? (
         <>
           <nav aria-label="Collections" className="col-span-4">

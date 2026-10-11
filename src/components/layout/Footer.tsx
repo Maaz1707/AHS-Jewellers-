@@ -3,6 +3,7 @@ import { footerNav } from "@/data/navigation";
 import { site, whatsappLink, directionsLink } from "@/data/site";
 import { FacebookIcon, InstagramIcon, PhoneIcon, WhatsAppIcon, YoutubeIcon } from "../ui/Icons";
 import Logo from "../ui/Logo";
+import Monogram from "../ui/Monogram";
 import Newsletter from "./Newsletter";
 
 function Column({ title, children }: { title: string; children: React.ReactNode }) {
@@ -140,9 +141,8 @@ export default function Footer() {
         {/* Hallmark note */}
         <div className="flex flex-col gap-6 border-t border-white/15 py-10 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-5">
-            <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-full border border-gold/60 font-serif text-sm tracking-wide text-gold-pale">
-              916
-            </span>
+            {/* The house seal */}
+            <Monogram frame="var(--color-gold)" className="h-20 w-auto shrink-0 text-gold-pale" />
             <p className="max-w-narrow text-sm text-white/75">
               {site.hallmark.short}{" "}
               <Link href="/hallmarking" className="link-line text-white">
@@ -150,7 +150,7 @@ export default function Footer() {
               </Link>
             </p>
           </div>
-          <Logo tone="light" className="self-start md:self-auto" />
+          <Logo tone="light" mark={false} className="self-start md:self-auto" />
         </div>
 
         {/* Legal */}

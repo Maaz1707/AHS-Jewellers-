@@ -67,8 +67,9 @@ export default function RevealImage({
       );
       gsap.fromTo(
         settle.current,
-        { scale: 1.1 },
-        { scale: 1, duration: MOTION.settle, delay, ease: MOTION.ease, scrollTrigger: trigger },
+        // A soft reveal: the photograph settles from a slight zoom and comes into focus.
+        { scale: 1.1, filter: "blur(8px)" },
+        { scale: 1, filter: "blur(0px)", duration: MOTION.settle, delay, ease: MOTION.ease, scrollTrigger: trigger, clearProps: "filter" },
       );
 
       if (parallax > 0) {

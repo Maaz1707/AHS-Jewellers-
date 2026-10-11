@@ -77,6 +77,7 @@ export default function ProductGallery({ items, title }: Props) {
           onPointerLeave={() => setZooming(false)}
           onPointerMove={onMove}
           aria-label={`Open ${title} full screen, image ${index + 1} of ${items.length}`}
+          data-cursor="View"
           className={`group relative block aspect-portrait flex-1 overflow-hidden bg-ivory ${zooming ? "cursor-zoom-in" : ""}`}
         >
           <div

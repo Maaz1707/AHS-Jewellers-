@@ -204,7 +204,7 @@ export default function Header() {
               <MenuIcon className="size-6" />
             </button>
 
-            <Logo tone={transparent ? "light" : "ink"} className="max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2" />
+            <Logo compact tone={transparent ? "light" : "ink"} className="max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2" />
 
             <nav aria-label="Main" className="ml-12 hidden h-full lg:block xl:ml-16">
               <ul className="flex h-full items-center gap-8 xl:gap-10">

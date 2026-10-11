@@ -39,44 +39,37 @@ export default function ProductCard({
 }: Props) {
   const enquire = useProductEnquiry(product);
   const primary = pieceImage(product, 0);
-  const secondary = product.images[1] ? pieceImage(product, 1) : null;
   const collection = collectionBySlug(product.collection);
   const href = productPath(product);
 
   return (
     <article className={`group relative ${className}`}>
-      <div className={`relative overflow-hidden bg-ivory ${frames[frame]}`}>
+      <div className={`relative overflow-hidden bg-ivory ${frames[frame]}`} data-cursor="View">
         <Link href={href} className="absolute inset-0 block" aria-label={`${product.name}, ${product.code}`}>
+          {/* One soft tone under every photograph: whites take on the ivory, so mixed sources sit together. */}
           <Image
             src={primary.src}
             alt={primary.alt}
             fill
             sizes={sizes}
             priority={priority}
-            className="object-cover transition-transform duration-1000 ease-luxe group-hover:scale-105"
+            className="object-cover mix-blend-multiply transition-transform duration-1000 ease-luxe group-hover:scale-110"
           />
-          {secondary ? (
-            <Image
-              src={secondary.src}
-              alt=""
-              fill
-              sizes={sizes}
-              className="object-cover opacity-0 transition-opacity duration-700 ease-luxe group-hover:opacity-100"
-            />
-          ) : null}
         </Link>
 
         {product.online ? <OnlineTag className="pointer-events-none absolute left-3 top-3" /> : null}
         <WishlistButton product={product} className="absolute right-3 top-3" />
 
-        {/* Quick enquiry: slides up on hover or keyboard focus on larger screens. */}
-        <a
-          {...enquire}
-          className="absolute inset-x-0 bottom-0 hidden h-12 translate-y-full items-center justify-center gap-3 bg-white/95 eyebrow text-ink transition-transform duration-700 ease-luxe group-hover:translate-y-0 focus-visible:translate-y-0 focus-visible:outline-offset-0 hover:text-gold-deep md:flex"
-        >
-          <WhatsAppIcon className="size-4" />
-          Enquire on WhatsApp
-        </a>
+        {/* Hover and keyboard focus: purity, weight and a quiet enquiry, on larger screens. */}
+        <div className="absolute inset-x-3 bottom-3 hidden translate-y-4 items-center justify-between gap-4 bg-white/95 px-4 py-3 opacity-0 backdrop-blur-sm transition-[opacity,transform] duration-700 ease-luxe group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100 md:flex">
+          <span className="text-sm text-ink-soft figures">
+            {product.purity} · {formatGrams(product.weight)}
+          </span>
+          <a {...enquire} aria-label={`Enquire about ${product.name} on WhatsApp`} className="inline-flex items-center gap-2 eyebrow text-ink hover:text-gold-deep">
+            <WhatsAppIcon className="size-4" />
+            <span className="link-draw">Enquire</span>
+          </a>
+        </div>
       </div>
 
       <div className="mt-5 flex flex-col gap-1">

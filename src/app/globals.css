@@ -17,6 +17,9 @@
   --color-gold: #b08d57;
   --color-gold-deep: #86663a;
   --color-gold-pale: #e8dbc4;
+  /* Second accent, used rarely: the deep green of a polki necklace's emerald drops. */
+  --color-emerald: #1d4a3c;
+  --color-emerald-deep: #143329;
   /* Data marks only: a richer gold that passes the chart chroma and contrast checks. */
   --color-chart: #9a6a1e;
   --color-line: #e8e2d9;
@@ -248,6 +251,16 @@
   }
 }
 
+/* The home page spotlight stage: as tall as the screen allows on desktop. */
+@utility stage-frame {
+  aspect-ratio: var(--aspect-landscape);
+  width: 100%;
+  @variant lg {
+    aspect-ratio: auto;
+    height: calc(100svh - 12rem);
+  }
+}
+
 @utility skeleton {
   background-image: linear-gradient(
     90deg,
@@ -324,6 +337,25 @@
 /* Prices, rates and weights: lining, tabular figures so columns align (Cormorant defaults to old-style). */
 @utility figures {
   font-variant-numeric: lining-nums tabular-nums;
+}
+
+/*
+ * The house motif: a jaali lattice of interlocking four-petal flowers, drawn as
+ * a fine gold line. Use sparingly. Opacity is set where it is used.
+ */
+@utility bg-jaali {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 20 20'%3E%3Cg fill='none' stroke='%23B08D57' stroke-width='0.32'%3E%3Ccircle cx='0' cy='0' r='14.142'/%3E%3Ccircle cx='20' cy='0' r='14.142'/%3E%3Ccircle cx='0' cy='20' r='14.142'/%3E%3Ccircle cx='20' cy='20' r='14.142'/%3E%3Ccircle cx='10' cy='10' r='1.1'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 44px 44px;
+  background-position: center;
+}
+@utility bg-jaali-light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 20 20'%3E%3Cg fill='none' stroke='%23E8DBC4' stroke-width='0.32'%3E%3Ccircle cx='0' cy='0' r='14.142'/%3E%3Ccircle cx='20' cy='0' r='14.142'/%3E%3Ccircle cx='0' cy='20' r='14.142'/%3E%3Ccircle cx='20' cy='20' r='14.142'/%3E%3Ccircle cx='10' cy='10' r='1.1'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 44px 44px;
+  background-position: center;
+}
+/* The motif fades out towards the edges so it reads as a texture, never a fill. */
+@utility jaali-fade {
+  mask-image: radial-gradient(ellipse at center, #000 20%, transparent 72%);
 }
 
 /* Quick-choice chips (amounts, presets). aria-pressed marks the chosen one. 48px tall on phones. */
@@ -547,6 +579,30 @@
   .hero-fade {
     animation: hero-in 1.2s var(--ease-luxe) var(--d, 0s) both;
   }
+}
+
+/* Spotlight steps share one grid cell; only the first shows before scripts take over. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-spot-step]:not(:first-child) {
+    visibility: hidden;
+  }
+}
+
+/* Custom cursor: the system cursor gives way only over labelled elements. */
+html.has-cursor [data-cursor],
+html.has-cursor [data-cursor] * {
+  cursor: none;
+}
+
+/* Opening sequence: shown only when the inline script in layout.tsx marks a first visit. */
+.intro-curtain {
+  display: none;
+}
+html[data-intro] .intro-curtain {
+  display: flex;
+}
+html[data-intro] .hero-fade {
+  animation-delay: calc(var(--d, 0s) + 1.5s);
 }
 
 @keyframes menu-in {

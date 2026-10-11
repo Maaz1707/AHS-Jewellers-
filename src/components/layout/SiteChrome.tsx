@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import BagDrawer from "./BagDrawer";
+import Cursor from "./Cursor";
 import FloatingWhatsApp from "./FloatingWhatsApp";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -32,6 +33,7 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
       <FloatingWhatsApp />
       <InstallPrompt />
       <AppTabBar />
+      <Cursor />
     </>
   );
 }

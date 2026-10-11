@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 import { site } from "@/data/site";
+import { INTRO_SCRIPT } from "@/lib/intro";
 import ServiceWorker from "@/components/app/ServiceWorker";
 import StoreHydrator from "@/components/providers/StoreHydrator";
 import Toaster from "@/components/ui/Toaster";
@@ -61,7 +62,11 @@ export const viewport: Viewport = {
 /** Shared by the public site and the admin panel. Site chrome lives in (site)/layout. */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-IN" className={`${serif.variable} ${sans.variable}`}>
+    <html lang="en-IN" className={`${serif.variable} ${sans.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Decides before first paint whether the first-visit opening plays (see lib/intro.ts). */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
+      </head>
       <body>
         <noscript>
           <style>{`[data-reveal]{visibility:visible!important}`}</style>

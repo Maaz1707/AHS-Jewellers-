@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import TextLink from "@/components/ui/TextLink";
-import RevealImage from "@/components/ui/RevealImage";
+import Monogram from "@/components/ui/Monogram";
 import SiteChrome from "@/components/layout/SiteChrome";
 
 export const metadata: Metadata = { title: "Page not found" };
@@ -50,7 +50,10 @@ export default function NotFound() {
           </nav>
         </div>
         <div className="lg:col-span-5 lg:col-start-8">
-          <RevealImage image="dailyStill" immediate priority sizes="(min-width: 1024px) 40vw, 100vw" className="aspect-portrait" />
+          <div className="relative flex aspect-portrait items-center justify-center overflow-hidden bg-ivory">
+            <div aria-hidden="true" className="bg-jaali jaali-fade absolute inset-0 opacity-70" />
+            <Monogram className="relative h-64 w-auto text-emerald md:h-80" />
+          </div>
         </div>
       </div>
     </section>

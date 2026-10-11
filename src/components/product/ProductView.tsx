@@ -12,6 +12,7 @@ import SectionHeading from "../ui/SectionHeading";
 import TextLink from "../ui/TextLink";
 import type { GalleryItem } from "./Lightbox";
 import ProductDetail from "./ProductDetail";
+import ProductCloseUp from "./ProductCloseUp";
 import ProductGallery from "./ProductGallery";
 
 /** The piece first, then its collection’s styled photographs for context. */
@@ -97,17 +98,19 @@ export default function ProductView({ slug, seed }: { slug: string; seed?: Produ
             </ol>
           </nav>
         </div>
-        <div className="md:shell grid gap-10 md:grid-cols-12 lg:gap-16">
-          <div className="md:col-span-7">
+        <div className="md:shell grid gap-10 md:grid-cols-12 lg:gap-12">
+          <div className="md:col-span-7 lg:col-span-8">
             <div className="md:sticky md:top-28">
               <ProductGallery items={galleryFor(product)} title={product.name} />
             </div>
           </div>
-          <div className="px-5 md:col-span-5 md:px-0">
+          <div className="px-5 md:col-span-5 md:px-0 lg:col-span-4">
             <ProductDetail product={product} />
           </div>
         </div>
       </section>
+
+      <ProductCloseUp product={product} />
 
       {related.length ? (
         <section aria-labelledby="related" className="border-t border-line bg-ivory section-y">

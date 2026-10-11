@@ -3,6 +3,7 @@
 import { useRef, type ElementType, type ReactNode } from "react";
 import { gsap, SplitText, useGSAP, MOTION } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/lib/motion";
+import { INTRO_DELAY, introPlaying } from "@/lib/intro";
 
 type Props = {
   as?: ElementType;
@@ -34,12 +35,14 @@ export default function RevealText({ as: Tag = "div", children, className = "", 
       }
 
       const trigger = immediate ? undefined : { trigger: el, start: "top 88%", once: true };
+      // Opening headlines wait for the first-visit curtain to lift.
+      const wait = immediate && introPlaying() ? INTRO_DELAY : 0;
 
       if (mode === "block") {
         gsap.fromTo(
           el,
           { autoAlpha: 0, y: 24 },
-          { autoAlpha: 1, y: 0, duration: MOTION.reveal, delay, ease: MOTION.ease, scrollTrigger: trigger },
+          { autoAlpha: 1, y: 0, duration: MOTION.reveal, delay: delay + wait, ease: MOTION.ease, scrollTrigger: trigger },
         );
         return;
       }
@@ -55,7 +58,7 @@ export default function RevealText({ as: Tag = "div", children, className = "", 
             yPercent: 115,
             duration: MOTION.reveal,
             stagger: MOTION.stagger,
-            delay,
+            delay: delay + wait,
             ease: "expo.out",
             scrollTrigger: trigger,
           });

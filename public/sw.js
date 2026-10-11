@@ -8,7 +8,7 @@
  *
  * Bump VERSION to retire every cache on the next visit.
  */
-const VERSION = "ahs-v3";
+const VERSION = "ahs-v4";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "/offline";

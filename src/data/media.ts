@@ -454,6 +454,15 @@ export const videos = {
     alt: "A bride in a maang tikka and kundan earrings, filmed in soft light",
     note: "Home hero. 22 s loop. 540p on phones (9 MB), 720p elsewhere (15 MB).",
   },
+  bridalCampaign: {
+    sources: [
+      { src: pv(27296851, "12113523_960_540_50fps.mp4"), media: "(max-width: 767px)", type: "video/mp4" },
+      { src: pv(27296851, "12113524_1280_720_50fps.mp4"), type: "video/mp4" },
+    ],
+    poster: "https://images.pexels.com/videos/27296851/asian-beautiful-beauty-bride-27296851.jpeg",
+    alt: "A bride lowers her eyes beneath a kundan maang tikka",
+    note: "Home bridal campaign film. Same shoot as the hero, a closer frame. Replace with the house's own bridal film.",
+  },
   craftDesign: {
     sources: [{ src: pv(6262756, "6262756-hd_1280_720_25fps.mp4"), type: "video/mp4" }],
     poster: "https://images.pexels.com/videos/6262756/pexels-photo-6262756.jpeg",

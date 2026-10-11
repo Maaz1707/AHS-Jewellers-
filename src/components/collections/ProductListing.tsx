@@ -27,6 +27,7 @@ import { CheckboxField } from "../ui/Field";
 import { CloseIcon, FilterIcon } from "../ui/Icons";
 import Popover from "../ui/Popover";
 import ProductCard from "../ui/ProductCard";
+import ProductFeature from "../ui/ProductFeature";
 import TextLink from "../ui/TextLink";
 import { CheckList, SortList, WeightRange, categoryLabel, purityLabel } from "./FilterControls";
 
@@ -303,17 +304,24 @@ export default function ProductListing({ scope, categoryFilter = true, noun }: P
             </div>
           </div>
         ) : (
-          <ul ref={grid} className="grid grid-cols-2 gap-x-4 gap-y-12 pt-10 md:grid-cols-3 md:gap-x-8 md:gap-y-16 md:pt-12 xl:grid-cols-4 xl:gap-x-10">
-            {results.map((p: Product, i) => (
-              <li key={p.slug} data-card="" data-flip-id={p.slug}>
-                <ProductCard
-                  product={p}
-                  priority={i < 4}
-                  showCollection={!scope.collection}
-                  sizes="(min-width: 1280px) 22vw, (min-width: 768px) 30vw, 46vw"
-                />
-              </li>
-            ))}
+          <ul ref={grid} className="grid grid-flow-row-dense grid-cols-2 gap-x-4 gap-y-12 pt-10 md:grid-cols-3 md:gap-x-8 md:gap-y-16 md:pt-12 xl:grid-cols-4 xl:gap-x-10">
+            {results.map((p: Product, i) =>
+              // Every fifth piece breaks the rhythm as a large feature tile.
+              i % 5 === 4 ? (
+                <li key={p.slug} data-card="" data-flip-id={p.slug} className="col-span-2">
+                  <ProductFeature product={p} sizes="(min-width: 1280px) 46vw, (min-width: 768px) 62vw, 100vw" />
+                </li>
+              ) : (
+                <li key={p.slug} data-card="" data-flip-id={p.slug}>
+                  <ProductCard
+                    product={p}
+                    priority={i < 4}
+                    showCollection={!scope.collection}
+                    sizes="(min-width: 1280px) 22vw, (min-width: 768px) 30vw, 46vw"
+                  />
+                </li>
+              ),
+            )}
           </ul>
         )}
       </div>
