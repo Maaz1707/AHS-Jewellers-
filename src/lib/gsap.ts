@@ -14,13 +14,13 @@ export const MOTION = {
   /** Menus, filters, page transitions. */
   fast: 0.6,
   /** Content arriving after a navigation. */
-  base: 0.9,
-  /** Headlines, images and cards revealed on scroll. */
-  reveal: 1.2,
+  base: 0.8,
+  /** Headlines, images and cards revealed on scroll. Reveal plus stagger always finishes inside a second. */
+  reveal: 0.8,
   /** Photographs settling from a slight zoom. */
-  settle: 1.6,
+  settle: 1,
   /** Between items in a group. */
-  stagger: 0.08,
+  stagger: 0.06,
 } as const;
 
 let registered = false;

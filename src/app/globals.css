@@ -215,32 +215,54 @@
   }
 }
 
-/* Layout sizes for the horizontal collections showcase (viewport-relative by design). */
-@utility showcase-intro {
-  width: 80vw;
-  @variant md { width: 44vw; }
-  @variant lg { width: 30vw; }
-}
-@utility showcase-card {
-  width: 78vw;
-  @variant md { width: 44vw; }
-  @variant lg { width: 34vw; }
-  @variant xl { width: 30vw; }
-}
-@utility showcase-frame {
-  aspect-ratio: var(--aspect-tall);
+/*
+ * Home page pacing: a section that holds one screen on desktop and never more.
+ * Content is centred; if it ever needs more room the section grows rather than clips.
+ */
+@utility screen-fit {
+  padding-block: var(--spacing-16);
+  @variant md {
+    padding-block: var(--spacing-20);
+  }
   @variant lg {
-    aspect-ratio: auto;
-    height: 62vh;
+    min-height: min(100svh, 60rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: var(--spacing-12);
   }
 }
-@utility showcase-end {
-  width: 1px;
-  @variant lg { width: 8vw; }
+/* A large image that fills what is left of one screen beside its text (desktop). */
+@utility screen-frame {
+  aspect-ratio: var(--aspect-landscape);
+  width: 100%;
+  @variant lg {
+    aspect-ratio: auto;
+    height: min(calc(100svh - 10rem), 48rem);
+  }
 }
-@utility drift-bleed {
-  left: -8%;
-  right: -8%;
+
+/* The bridal film: most of a phone screen; on desktop, whatever the lookbook leaves of one screen. */
+@utility campaign-film {
+  height: 64svh;
+  min-height: 28rem;
+  @variant lg {
+    height: auto;
+    min-height: 0;
+    flex: 1 1 0%;
+  }
+}
+
+/* Swipe cards: one and a bit on phones, two and a bit on tablets. */
+@utility swipe-card {
+  width: 78%;
+  @variant md { width: 44%; }
+}
+/* Carousel items: 1.3 visible on phones, 2.5 on tablets, 4 on desktop. */
+@utility carousel-item {
+  width: calc((100% - var(--spacing-4)) / 1.3);
+  @variant md { width: calc((100% - 2 * var(--spacing-6)) / 2.5); }
+  @variant lg { width: calc((100% - 3 * var(--spacing-8)) / 4); }
 }
 
 /* Tall image frame that fills the viewport beside sticky text on desktop. */
@@ -395,16 +417,17 @@
 }
 
 /* Vertical rhythm. Every page opening and every content section uses one of these. */
+/* Phones run one step tighter than tablets and desktop. */
 @utility hero-y {
   padding-top: var(--spacing-10);
-  padding-bottom: var(--spacing-16);
+  padding-bottom: var(--spacing-14);
   @variant md {
     padding-top: var(--spacing-16);
     padding-bottom: var(--spacing-24);
   }
 }
 @utility section-y {
-  padding-block: var(--spacing-20);
+  padding-block: var(--spacing-16);
   @variant md {
     padding-block: var(--spacing-32);
   }
@@ -412,7 +435,7 @@
 /* Single-section pages (bag, checkout, account): an opening plus content. */
 @utility page-y {
   padding-top: var(--spacing-10);
-  padding-bottom: var(--spacing-20);
+  padding-bottom: var(--spacing-16);
   @variant md {
     padding-top: var(--spacing-16);
     padding-bottom: var(--spacing-32);
@@ -420,7 +443,7 @@
 }
 /* Short bands: calls to action, rate strips, closing notes. */
 @utility band-y {
-  padding-block: var(--spacing-16);
+  padding-block: var(--spacing-14);
   @variant md {
     padding-block: var(--spacing-24);
   }
@@ -577,21 +600,112 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   .hero-fade {
-    animation: hero-in 1.2s var(--ease-luxe) var(--d, 0s) both;
+    animation: hero-in 0.7s var(--ease-luxe) var(--d, 0s) both;
   }
 }
 
-/* Spotlight steps share one grid cell; only the first shows before scripts take over. */
-@media (prefers-reduced-motion: no-preference) {
+/* Spotlight steps share one grid cell on desktop; only the first shows before scripts take over. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
   [data-spot-step]:not(:first-child) {
     visibility: hidden;
   }
 }
 
-/* Custom cursor: the system cursor gives way only over labelled elements. */
-html.has-cursor [data-cursor],
-html.has-cursor [data-cursor] * {
-  cursor: none;
+/* Autoplay progress: the bar's own animation end advances the cycle (lib/useAutoplay.ts). */
+.autoplay-bar {
+  transform: scaleX(0);
+  animation-name: autoplay-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes autoplay-fill {
+  to { transform: scaleX(1); }
+}
+
+/* Image swaps: the new photograph wipes in behind a soft band of gold light. */
+@keyframes wipe-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes wipe-light {
+  from { transform: translateX(-50%); opacity: 1; }
+  80% { opacity: 1; }
+  to { transform: translateX(50%); opacity: 0; }
+}
+.wipe-in {
+  animation: wipe-in 0.9s var(--ease-luxe) both;
+}
+.wipe-light {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 44%,
+    rgb(232 219 196 / 0.5) 48.5%,
+    rgb(176 141 87 / 0.55) 50%,
+    transparent 51%
+  );
+  animation: wipe-light 0.9s var(--ease-luxe) both;
+}
+
+/* A still photograph drifts slowly while it is the one on show. */
+@keyframes ken-burns {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to { transform: scale(1.07) translate3d(-1.5%, -1%, 0); }
+}
+.ken-burns {
+  animation: ken-burns 9s var(--ease-soft) infinite alternate both;
+}
+
+/* Floors: content travels vertically, like the view from a lift. */
+@keyframes floor-in-up { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes floor-out-up { from { transform: translateY(0); } to { transform: translateY(100%); } }
+@keyframes floor-in-down { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes floor-out-down { from { transform: translateY(0); } to { transform: translateY(-100%); } }
+@keyframes rise-in { from { opacity: 0; transform: translateY(var(--rise, 24px)); } to { opacity: 1; transform: translateY(0); } }
+.floor-in-up { animation: floor-in-up 0.9s var(--ease-curtain) both; }
+.floor-out-up { animation: floor-out-up 0.9s var(--ease-curtain) both; }
+.floor-in-down { animation: floor-in-down 0.9s var(--ease-curtain) both; }
+.floor-out-down { animation: floor-out-down 0.9s var(--ease-curtain) both; }
+.rise-in { animation: rise-in 0.7s var(--ease-luxe) both; }
+
+/* One sweep of light across a gold or emerald phrase when it first comes into view. */
+.sheen {
+  background-image: linear-gradient(100deg, var(--sheen-tone) 40%, var(--sheen-light) 50%, var(--sheen-tone) 60%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sheen[data-in] {
+  animation: sheen 0.9s var(--ease-soft) 0.1s both;
+}
+@keyframes sheen {
+  from { background-position: 100% 0; }
+  to { background-position: 0% 0; }
+}
+
+/* Reduced motion: swaps are instant and nothing drifts. */
+@media (prefers-reduced-motion: reduce) {
+  .wipe-in,
+  .ken-burns,
+  .rise-in,
+  .floor-in-up,
+  .floor-out-up,
+  .floor-in-down,
+  .floor-out-down {
+    animation: none;
+  }
+  .wipe-light {
+    display: none;
+  }
+}
+
+/* Slim reading-progress line along the top of the window. */
+.scroll-progress {
+  transform: scaleX(var(--progress, 0));
 }
 
 /* Opening sequence: shown only when the inline script in layout.tsx marks a first visit. */

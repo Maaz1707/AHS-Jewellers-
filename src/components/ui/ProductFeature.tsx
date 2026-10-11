@@ -24,7 +24,7 @@ export default function ProductFeature({ product, sizes = "(min-width: 768px) 60
 
   return (
     <article className="group relative">
-      <div className="relative aspect-landscape overflow-hidden bg-ivory" data-cursor="View">
+      <div className="relative aspect-landscape overflow-hidden bg-ivory">
         <Link href={href} className="absolute inset-0 block" aria-label={`${product.name}, ${product.code}`}>
           <Image src={img.src} alt={img.alt} fill sizes={sizes} className="object-cover transition-transform duration-1000 ease-luxe group-hover:scale-105" />
         </Link>

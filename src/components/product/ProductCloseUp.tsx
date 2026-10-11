@@ -58,7 +58,7 @@ export default function ProductCloseUp({ product }: { product: Product }) {
             const clamp = (v: number) => Math.max(-limit, Math.min(limit, v));
             return (
               <li key={i}>
-                <div className="relative aspect-square overflow-hidden bg-ivory" data-cursor="View">
+                <div className="relative aspect-square overflow-hidden bg-ivory">
                   <div
                     className="absolute inset-0"
                     style={{

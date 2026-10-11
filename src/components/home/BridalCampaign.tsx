@@ -1,67 +1,194 @@
 "use client";
 
-import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { images, type ImageKey } from "@/data/media";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { prefersReducedMotion } from "@/lib/motion";
+import { prefersReducedMotion, useReducedMotion } from "@/lib/motion";
 import { useDragScroll } from "@/lib/useDragScroll";
 import Button from "../ui/Button";
+import { PlayPause } from "../ui/Controls";
 import Image from "../ui/Img";
+import Sheen from "../ui/Sheen";
 import VideoBlock from "../ui/VideoBlock";
 
-/** The lookbook: five portraits, each drifting at its own pace. */
-const FRAMES: { image: ImageKey; caption: string; drift: number; offset: string }[] = [
-  { image: "bridePortraitIvory", caption: "The engagement, in ivory and polki", drift: -14, offset: "md:mt-0" },
-  { image: "brideGoldChoker", caption: "Mehendi, with a gold choker", drift: 10, offset: "md:mt-24" },
-  { image: "brideVelvet", caption: "The wedding, in velvet and kundan", drift: -8, offset: "md:mt-8" },
-  { image: "brideTikkaDetail", caption: "A maang tikka, set by hand", drift: 16, offset: "md:mt-32" },
-  { image: "brideIvoryLehenga", caption: "The reception, lighter gold", drift: -12, offset: "md:mt-12" },
+/** The lookbook: five portraits from the bridal salon. */
+const FRAMES: { image: ImageKey; caption: string }[] = [
+  { image: "bridePortraitIvory", caption: "The engagement, in ivory and polki" },
+  { image: "brideGoldChoker", caption: "Mehendi, with a gold choker" },
+  { image: "brideVelvet", caption: "The wedding, in velvet and kundan" },
+  { image: "brideTikkaDetail", caption: "A maang tikka, set by hand" },
+  { image: "brideIvoryLehenga", caption: "The reception, lighter gold" },
 ];
 
+/** Pixels per second the lookbook drifts. */
+const SPEED = 28;
+
+function Frame({ image, caption, hidden = false }: { image: ImageKey; caption: string; hidden?: boolean }) {
+  return (
+    <li aria-hidden={hidden || undefined} className="flex shrink-0 items-end gap-4 pr-10 md:pr-14">
+      <span className="relative block h-40 w-32 shrink-0 overflow-hidden bg-ivory">
+        <Image src={images[image].src} alt={hidden ? "" : images[image].alt} fill sizes="128px" className="object-cover" draggable={false} />
+      </span>
+      <span className="w-40 pb-1 font-serif text-lg italic leading-snug text-ink-soft">{caption}</span>
+    </li>
+  );
+}
+
 /**
- * The bridal campaign: a full-bleed film with one large italic line over it,
- * then a lookbook to drag or swipe sideways, each frame drifting at its own
- * speed as the page scrolls.
+ * A slow marquee of the lookbook. Drifts by itself; pauses under the mouse,
+ * with keyboard focus, off screen, or with the pause button; can be dragged
+ * either way. With reduced motion it is a still row to swipe or drag.
+ */
+function Lookbook() {
+  const reduced = useReducedMotion();
+  const wrap = useRef<HTMLDivElement>(null);
+  const track = useRef<HTMLUListElement>(null);
+  const still = useRef<HTMLUListElement>(null);
+  const [stopped, setStopped] = useState(false);
+  const stoppedRef = useRef(stopped);
+  useEffect(() => {
+    stoppedRef.current = stopped;
+  }, [stopped]);
+  useDragScroll(still);
+
+  useEffect(() => {
+    const box = wrap.current;
+    const el = track.current;
+    if (reduced || !box || !el) return;
+    let x = 0;
+    let last = performance.now();
+    let raf = 0;
+    let hover = false;
+    let focus = false;
+    let seen = false;
+    let drag: { start: number; x0: number; moved: boolean } | null = null;
+
+    const half = () => el.scrollWidth / 2;
+    const place = () => {
+      const h = half();
+      if (h > 0) x = ((x % h) - h) % h;
+      el.style.transform = `translate3d(${x}px, 0, 0)`;
+    };
+    const tick = (now: number) => {
+      const dt = Math.min(64, now - last) / 1000;
+      last = now;
+      if (!drag && !hover && !focus && seen && !stoppedRef.current) {
+        x -= SPEED * dt;
+        place();
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    const io = new IntersectionObserver(([e]) => {
+      seen = e.isIntersecting;
+    });
+    io.observe(box);
+    const enter = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") hover = true;
+    };
+    const leave = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") hover = false;
+    };
+    const focusIn = () => {
+      focus = true;
+    };
+    const focusOut = () => {
+      focus = false;
+    };
+    const down = (e: PointerEvent) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      if ((e.target as Element).closest("button")) return;
+      drag = { start: e.clientX, x0: x, moved: false };
+    };
+    const move = (e: PointerEvent) => {
+      if (!drag) return;
+      const dx = e.clientX - drag.start;
+      if (Math.abs(dx) > 4) drag.moved = true;
+      x = drag.x0 + dx;
+      place();
+    };
+    const up = () => {
+      drag = null;
+    };
+
+    box.addEventListener("pointerenter", enter);
+    box.addEventListener("pointerleave", leave);
+    box.addEventListener("focusin", focusIn);
+    box.addEventListener("focusout", focusOut);
+    box.addEventListener("pointerdown", down);
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+    return () => {
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      box.removeEventListener("pointerenter", enter);
+      box.removeEventListener("pointerleave", leave);
+      box.removeEventListener("focusin", focusIn);
+      box.removeEventListener("focusout", focusOut);
+      box.removeEventListener("pointerdown", down);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+    };
+  }, [reduced]);
+
+  if (reduced) {
+    return (
+      <ul ref={still} aria-label="The bridal lookbook" className="no-scrollbar flex cursor-grab overflow-x-auto px-5 md:px-10 xl:px-16">
+        {FRAMES.map((f) => (
+          <Frame key={f.image} {...f} />
+        ))}
+      </ul>
+    );
+  }
+
+  return (
+    <div ref={wrap} className="relative flex items-center gap-4">
+      <div className="min-w-0 flex-1 cursor-grab touch-pan-y overflow-hidden select-none active:cursor-grabbing">
+        <ul ref={track} aria-label="The bridal lookbook" className="flex w-max will-change-transform">
+          {FRAMES.map((f) => (
+            <Frame key={f.image} {...f} />
+          ))}
+          {FRAMES.map((f) => (
+            <Frame key={`${f.image}-again`} {...f} hidden />
+          ))}
+        </ul>
+      </div>
+      <div className="shrink-0 bg-white pr-5 md:pr-10 xl:pr-16">
+        <PlayPause enabled stopped={stopped} onToggle={() => setStopped((s) => !s)} label="the lookbook" />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The bridal campaign in one screen: a full-bleed film with one large italic
+ * line, and beneath it the lookbook drifting slowly past.
  */
 export default function BridalCampaign() {
   const root = useRef<HTMLElement>(null);
-  const rail = useRef<HTMLDivElement>(null);
-  useDragScroll(rail);
 
   useGSAP(
     () => {
-      const el = root.current;
-      if (!el || prefersReducedMotion()) return;
-      const mm = gsap.matchMedia();
-      mm.add("(min-width: 768px)", () => {
-        const book = el.querySelector<HTMLElement>("[data-lookbook]");
-        if (!book) return;
-        gsap.utils.toArray<HTMLElement>("[data-drift]", el).forEach((f) => {
-          gsap.fromTo(
-            f,
-            { yPercent: -Number(f.dataset.drift) },
-            { yPercent: Number(f.dataset.drift), ease: "none", scrollTrigger: { trigger: book, start: "top bottom", end: "bottom top", scrub: true } },
-          );
-        });
-      });
+      if (prefersReducedMotion()) return;
       gsap.fromTo(
         "[data-campaign-line]",
-        { autoAlpha: 0, y: 40 },
-        { autoAlpha: 1, y: 0, duration: 1.6, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 60%", once: true } },
+        { autoAlpha: 0, y: 32 },
+        { autoAlpha: 1, y: 0, duration: 0.9, ease: "expo.out", scrollTrigger: { trigger: root.current, start: "top 60%", once: true } },
       );
-      return () => mm.revert();
     },
     { scope: root },
   );
 
   return (
-    <section ref={root} aria-labelledby="campaign-title" className="bg-white">
+    <section ref={root} aria-labelledby="campaign-title" className="flex flex-col bg-white lg:h-svh">
       {/* The film */}
-      <div className="relative h-svh overflow-hidden bg-ink text-white" style={{ minHeight: "34rem" }}>
-        <VideoBlock video="bridalCampaign" control className="absolute inset-0" />
+      <div className="campaign-film relative overflow-hidden bg-ink text-white">
+        <VideoBlock video="bridalCampaign" control controlPosition="top-right" className="absolute inset-0" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-linear-to-t from-ink/80 via-ink/20 to-ink/10" />
-        <div className="shell pointer-events-none relative flex h-full flex-col justify-end pb-20 md:pb-28">
+        <div className="shell pointer-events-none relative flex h-full flex-col justify-end pb-10 md:pb-14">
           <p className="eyebrow flex items-center gap-4 text-gold-pale">
             <span aria-hidden="true" className="h-px w-8 bg-gold-pale" />
             The bridal salon
@@ -69,42 +196,25 @@ export default function BridalCampaign() {
           <h2 id="campaign-title" data-campaign-line="" className="mt-6 max-w-content display-hero">
             <em>Seven ceremonies.</em>
             <br />
-            <em className="text-gold-pale">One trousseau.</em>
+            <Sheen tone="gold-pale" className="italic">
+              One trousseau.
+            </Sheen>
           </h2>
+          <div className="pointer-events-auto mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <p className="max-w-prose text-white/85">
+              Planned upstairs, over tea, with the whole family: kundan, polki and meenakari for every function from the
+              haldi to the vidaai.
+            </p>
+            <Button href="/collections/bridal" variant="outline-light" arrow>
+              The Bridal collection
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* The lookbook */}
-      <div data-lookbook="" className="section-y overflow-hidden">
-        <div className="shell flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <p className="lede text-ink-soft">
-            Planned upstairs, over tea, with the whole family: kundan, polki and meenakari for every function from the haldi to
-            the vidaai.
-          </p>
-          <Button href="/collections/bridal" variant="secondary" magnetic={false} arrow>
-            The Bridal collection
-          </Button>
-        </div>
-        <div ref={rail} className="no-scrollbar mt-4 cursor-grab overflow-x-auto overflow-y-hidden py-12 active:cursor-grabbing md:mt-8 md:py-20" data-cursor="Drag">
-          <ul className="flex w-max gap-4 px-5 md:gap-8 md:px-10 xl:px-16">
-            {FRAMES.map((f) => (
-              <li key={f.image} className={`w-64 shrink-0 md:w-80 ${f.offset}`}>
-                <Link href="/collections/bridal" className="group block" tabIndex={-1} aria-hidden="true">
-                  <span data-drift={f.drift} className="relative block aspect-slim overflow-hidden bg-ivory">
-                    <Image
-                      src={images[f.image].src}
-                      alt=""
-                      fill
-                      sizes="320px"
-                      className="object-cover transition-transform duration-1000 ease-luxe group-hover:scale-105"
-                    />
-                  </span>
-                </Link>
-                <p className="mt-4 font-serif text-xl italic text-ink-soft">{f.caption}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="py-6 md:py-8">
+        <Lookbook />
       </div>
     </section>
   );

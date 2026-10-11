@@ -1,5 +1,4 @@
 import Hero from "@/components/home/Hero";
-import RateSlate from "@/components/home/RateSlate";
 import CollectionsShowcase from "@/components/home/CollectionsShowcase";
 import Statement from "@/components/home/Statement";
 import CraftStory from "@/components/home/CraftStory";
@@ -7,20 +6,21 @@ import FeaturedPieces from "@/components/home/FeaturedPieces";
 import Spotlight from "@/components/home/Spotlight";
 import BridalCampaign from "@/components/home/BridalCampaign";
 import Reviews from "@/components/home/Reviews";
-import Showroom from "@/components/home/Showroom";
-import SchemeTeaser from "@/components/home/SchemeTeaser";
-import VisitCTA from "@/components/home/VisitCTA";
+import FloorsToggle from "@/components/home/FloorsToggle";
+import PlanAndVisit from "@/components/home/PlanAndVisit";
 
 /**
- * Home. No two neighbouring sections share a layout: film, slate, sideways
- * gallery, type-only statement, pinned split, grid, pinned spotlight, film and
- * lookbook, editorial quotes, overlapping images, split calculator, map.
+ * Home. Each section holds about one screen and delivers its content by
+ * playing by itself or by tap, hover and drag, never by scroll. Only the
+ * spotlight pins, on desktop, for half a screen.
+ * Neighbours differ in layout: film with rate board, list and image, a single
+ * sentence, film with tabs, carousel, pinned stage, film and marquee, portrait
+ * and quote, lift panel, two columns.
  */
 export default function Home() {
   return (
     <>
       <Hero />
-      <RateSlate />
       <CollectionsShowcase />
       <Statement />
       <CraftStory />
@@ -28,9 +28,8 @@ export default function Home() {
       <Spotlight />
       <BridalCampaign />
       <Reviews />
-      <Showroom />
-      <SchemeTeaser />
-      <VisitCTA />
+      <FloorsToggle />
+      <PlanAndVisit />
     </>
   );
 }

@@ -5,7 +5,8 @@ import { useRef } from "react";
 import { createPortal } from "react-dom";
 import { useHydrated } from "@/lib/motion";
 import { useFocusTrap, useOverlayTransition } from "@/lib/overlay";
-import { ChevronLeft, ChevronRight, CloseIcon } from "../ui/Icons";
+import { useZoom } from "@/lib/useZoom";
+import { ChevronLeft, ChevronRight, CloseIcon, ZoomInIcon, ZoomOutIcon } from "../ui/Icons";
 
 export type GalleryItem = { src: string; alt: string; label: string };
 
@@ -18,17 +19,25 @@ type Props = {
   title: string;
 };
 
-/** Full-screen viewer. Arrow keys, swipe, Escape; focus stays inside while open. */
+/**
+ * Full-screen viewer. Arrow keys, swipe, Escape; focus stays inside while open.
+ * Double-click or double-tap zooms in at that point (the pointer or finger then
+ * pans); swiping between images waits until the zoom is off.
+ */
 export default function Lightbox({ items, index, open, onClose, onIndex, title }: Props) {
   const hydrated = useHydrated();
   const { mounted, visible } = useOverlayTransition(open, 500);
   const panel = useRef<HTMLDivElement>(null);
   const startX = useRef<number | null>(null);
   useFocusTrap(panel, open, onClose);
+  const zoom = useZoom(2.5);
 
   if (!hydrated || !mounted) return null;
 
-  const go = (d: number) => onIndex((index + d + items.length) % items.length);
+  const go = (d: number) => {
+    zoom.reset();
+    onIndex((index + d + items.length) % items.length);
+  };
   const item = items[index];
   const img = item;
 
@@ -53,32 +62,48 @@ export default function Lightbox({ items, index, open, onClose, onIndex, title }
           </span>
           <span className="ml-3 hidden text-gold-deep md:inline">{item.label}</span>
         </p>
-        <button type="button" data-autofocus="" onClick={onClose} aria-label="Close viewer" className="-mr-2 relative hit-area flex size-10 items-center justify-center text-ink hover:text-gold-deep">
-          <CloseIcon className="size-6" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={zoom.toggle}
+            aria-pressed={zoom.zoomed}
+            aria-label={zoom.zoomed ? "Zoom out" : "Zoom in"}
+            className="relative hit-area flex size-10 items-center justify-center text-ink hover:text-gold-deep"
+          >
+            {zoom.zoomed ? <ZoomOutIcon className="size-5" /> : <ZoomInIcon className="size-5" />}
+          </button>
+          <button type="button" data-autofocus="" onClick={onClose} aria-label="Close viewer" className="-mr-2 relative hit-area flex size-10 items-center justify-center text-ink hover:text-gold-deep">
+            <CloseIcon className="size-6" />
+          </button>
+        </div>
       </div>
 
       <div
-        className="relative flex-1 touch-pan-y select-none"
+        className={`relative flex-1 select-none overflow-hidden ${zoom.zoomed ? "cursor-zoom-out touch-none" : "cursor-zoom-in touch-pan-y"}`}
+        onDoubleClick={zoom.frame.onDoubleClick}
+        onPointerMove={zoom.frame.onPointerMove}
         onPointerDown={(e) => {
           startX.current = e.clientX;
         }}
         onPointerUp={(e) => {
-          if (startX.current === null) return;
+          zoom.frame.onPointerUp(e);
+          if (startX.current === null || zoom.zoomed) return;
           const dx = e.clientX - startX.current;
           if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
           startX.current = null;
         }}
       >
-        <Image
-          key={item.src}
-          src={img.src}
-          alt={img.alt}
-          fill
-          sizes="100vw"
-          className="object-contain [animation:toast-in_0.5s_var(--ease-luxe)]"
-          draggable={false}
-        />
+        <div className="absolute inset-0 transition-transform duration-500 ease-luxe" style={zoom.style}>
+          <Image
+            key={item.src}
+            src={img.src}
+            alt={img.alt}
+            fill
+            sizes="100vw"
+            className="object-contain [animation:toast-in_0.5s_var(--ease-luxe)]"
+            draggable={false}
+          />
+        </div>
       </div>
 
       {items.length > 1 ? (
@@ -91,7 +116,10 @@ export default function Lightbox({ items, index, open, onClose, onIndex, title }
               <button
                 key={it.src}
                 type="button"
-                onClick={() => onIndex(i)}
+                onClick={() => {
+                  zoom.reset();
+                  onIndex(i);
+                }}
                 aria-label={`Show image ${i + 1}`}
                 aria-current={i === index ? "true" : undefined}
                 className={`h-px w-8 transition-colors ${i === index ? "bg-gold" : "bg-line-strong hover:bg-stone"}`}

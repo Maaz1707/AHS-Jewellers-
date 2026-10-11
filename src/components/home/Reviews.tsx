@@ -1,80 +1,94 @@
-import { images } from "@/data/media";
+"use client";
+
+import { useRef } from "react";
+import { images, type ImageKey } from "@/data/media";
 import { reviews } from "@/data/reviews";
+import { useAutoplay, useSwap } from "@/lib/useAutoplay";
+import { Arrows, PlayPause } from "../ui/Controls";
 import Image from "../ui/Img";
-import { OrnamentDivider, PetalCorner } from "../ui/Motif";
-import RevealImage from "../ui/RevealImage";
-import RevealText from "../ui/RevealText";
+import { PetalCorner } from "../ui/Motif";
 import TextLink from "../ui/TextLink";
 
+/** The four stories on the home page, the first with the bridal portrait. */
+const STORIES = reviews.slice(0, 4).map((r, i) => ({ ...r, picture: (i === 0 ? "brideSareeDetail" : r.image ?? "brideSareeDetail") as ImageKey }));
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
 /**
- * Reviews as an editorial page: one story set large beside its portrait, and
- * three shorter voices placed off the grid around it.
+ * Reviews as an editorial spread in one screen: a portrait beside one story
+ * set large. The stories turn every six seconds, pause under the mouse or with
+ * keyboard focus, and can be moved with the arrows.
  */
 export default function Reviews() {
-  const [lead, ...rest] = reviews;
-  const others = rest.slice(0, 3);
-  // A different image from the lookbook directly above.
-  const portrait = "brideSareeDetail" as const;
+  const section = useRef<HTMLElement>(null);
+  const play = useAutoplay(section, STORIES.length, { interval: 6000 });
+  const { index } = play;
+  const before = useSwap(index);
+  const r = STORIES[index];
 
   return (
-    <section aria-labelledby="reviews-title" className="relative bg-white section-y">
-      <OrnamentDivider className="mb-16 md:mb-24" />
-      <div className="shell">
-        <div className="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-10">
-          <figure className="relative lg:col-span-5">
-            <RevealImage image={portrait} sizes="(min-width: 1024px) 38vw, 100vw" className="aspect-portrait" />
-            <PetalCorner className="absolute -left-3 -top-3 size-16" />
-            <figcaption className="mt-3 text-xs text-stone">
-              {lead.occasion}, {lead.year}
-            </figcaption>
-          </figure>
+    <section ref={section} aria-labelledby="reviews-title" className="relative bg-white screen-fit">
+      <div className="shell grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-10">
+        <figure className="relative lg:col-span-5">
+          <div className="relative aspect-landscape overflow-hidden bg-ivory lg:aspect-portrait">
+            {STORIES.map((s, i) => {
+              const on = i === index;
+              return (
+                <div key={s.name} aria-hidden={!on} className={`absolute inset-0 ${on ? `z-2 ${before >= 0 ? "wipe-in" : ""}` : i === before ? "z-1" : "opacity-0"}`}>
+                  <div className={`absolute inset-0 ${on ? "ken-burns" : ""}`}>
+                    <Image src={images[s.picture].src} alt={on ? images[s.picture].alt : ""} fill sizes="(min-width: 1024px) 38vw, 100vw" className="object-cover" />
+                  </div>
+                </div>
+              );
+            })}
+            {before >= 0 ? <span key={`light-${index}`} aria-hidden="true" className="wipe-light z-3" /> : null}
+          </div>
+          <PetalCorner className="absolute -left-3 -top-3 size-16" />
+          <figcaption className="mt-3 text-xs text-stone">
+            {r.occasion}, {r.year}
+          </figcaption>
+        </figure>
 
-          <div className="lg:col-span-6 lg:col-start-7">
-            <p className="eyebrow flex items-center gap-4 text-gold-deep">
-              <span aria-hidden="true" className="h-px w-8 bg-gold" />
-              <span id="reviews-title">In their words</span>
-            </p>
-            <blockquote className="mt-8">
+        <div className="lg:col-span-6 lg:col-start-7">
+          <p className="eyebrow flex items-center gap-4 text-gold-deep">
+            <span aria-hidden="true" className="h-px w-8 bg-gold" />
+            <span id="reviews-title">In their words</span>
+          </p>
+
+          <div data-hold="" aria-live={play.running ? "off" : "polite"} className="mt-8">
+            <figure key={r.name} className="rise-in">
               <span aria-hidden="true" className="block font-serif text-7xl leading-none text-gold">
                 &ldquo;
               </span>
-              <RevealText as="p" className="font-serif text-3xl font-light italic leading-snug text-ink md:text-5xl">
-                {lead.quote}
-              </RevealText>
-            </blockquote>
-            <p className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-1">
-              <span className="text-sm font-medium text-ink">{lead.name}</span>
-              <span aria-hidden="true" className="h-px w-6 bg-gold" />
-              <span className="text-sm text-stone">{lead.city}</span>
-            </p>
+              <blockquote className="font-serif text-2xl font-light italic leading-snug text-ink md:text-4xl">{r.quote}</blockquote>
+              <figcaption className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-1">
+                <span className="text-sm font-medium text-ink">{r.name}</span>
+                <span aria-hidden="true" className="h-px w-6 bg-gold" />
+                <span className="text-sm text-stone">
+                  {r.occasion}, {r.city}
+                </span>
+              </figcaption>
+            </figure>
           </div>
-        </div>
 
-        <ul className="mt-20 grid gap-12 md:mt-28 md:grid-cols-3 md:gap-10">
-          {others.map((r, i) => (
-            <li key={r.name} className={i === 1 ? "md:mt-16" : i === 2 ? "md:mt-6" : ""}>
-              <figure className="border-t border-gold pt-6">
-                <div className="flex items-center gap-4">
-                  {r.image ? (
-                    <span className="relative block size-12 shrink-0 overflow-hidden rounded-full bg-ivory">
-                      <Image src={images[r.image].src} alt="" fill sizes="48px" className="object-cover" />
-                    </span>
-                  ) : null}
-                  <figcaption className="text-sm">
-                    <span className="block font-medium text-ink">{r.name}</span>
-                    <span className="block text-stone">
-                      {r.occasion}, {r.city}
-                    </span>
-                  </figcaption>
-                </div>
-                <blockquote className="mt-5 font-serif text-2xl font-light leading-snug text-ink">&ldquo;{r.quote}&rdquo;</blockquote>
-              </figure>
-            </li>
-          ))}
-        </ul>
+          <div className="mt-10 flex items-center gap-5">
+            <span className="eyebrow text-stone figures">
+              {pad(index + 1)} / {pad(STORIES.length)}
+            </span>
+            <span aria-hidden="true" className="relative block h-px flex-1 overflow-hidden bg-line">
+              {play.enabled ? (
+                <span key={`bar-${index}`} {...play.bar} className="autoplay-bar absolute inset-0 origin-left bg-gold" />
+              ) : (
+                <span className="absolute inset-0 origin-left bg-gold" style={{ transform: `scaleX(${(index + 1) / STORIES.length})` }} />
+              )}
+            </span>
+            <Arrows label="story" onPrev={play.prev} onNext={play.next} />
+            <PlayPause enabled={play.enabled} stopped={play.stopped} onToggle={play.toggle} label="the stories" />
+          </div>
 
-        <div className="mt-16 flex justify-center">
-          <TextLink href="/reviews">Read every story</TextLink>
+          <div className="mt-8">
+            <TextLink href="/reviews">Read every story</TextLink>
+          </div>
         </div>
       </div>
     </section>

@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 import BagDrawer from "./BagDrawer";
-import Cursor from "./Cursor";
 import FloatingWhatsApp from "./FloatingWhatsApp";
 import Footer from "./Footer";
 import Header from "./Header";
 import MobileMenu from "./MobileMenu";
 import RatesModal from "./RatesModal";
+import ScrollProgress from "./ScrollProgress";
 import SearchOverlay from "./SearchOverlay";
 import WishlistDrawer from "./WishlistDrawer";
 import AppTabBar from "../app/AppTabBar";
@@ -18,6 +18,7 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
   return (
     <>
       <SmoothScroll />
+      <ScrollProgress />
       <Header />
       <PageTransition>
         <main id="main" tabIndex={-1} className="outline-none">
@@ -33,7 +34,6 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
       <FloatingWhatsApp />
       <InstallPrompt />
       <AppTabBar />
-      <Cursor />
     </>
   );
 }

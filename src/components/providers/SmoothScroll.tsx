@@ -30,12 +30,14 @@ export default function SmoothScroll() {
   useEffect(() => {
     if (reduced) return;
 
+    // A wheel notch travels the same distance as native scrolling, and arrives
+    // about as quickly: smoothing only, never slower, never snapping. Touch
+    // keeps the device's own scrolling.
     const instance = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.16,
       smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.4,
+      wheelMultiplier: 1,
+      syncTouch: false,
       // Smooth in-page anchor links, landing clear of the fixed header.
       anchors: { offset: -112 },
     });

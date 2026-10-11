@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 /** Transient interface state. Not persisted. Only one overlay is open at a time. */
-export type Overlay = "menu" | "search" | "bag" | "rates" | "wishlist" | "filters" | "lightbox";
+export type Overlay = "menu" | "search" | "bag" | "rates" | "wishlist" | "filters" | "sort" | "lightbox";
 
 type UIState = {
   overlay: Overlay | null;

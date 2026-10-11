@@ -15,7 +15,7 @@ type Props = {
   active?: boolean;
   /** Show a small pause / play control. */
   control?: boolean;
-  controlPosition?: "bottom-left" | "bottom-right";
+  controlPosition?: "bottom-left" | "bottom-right" | "top-right";
   sizes?: string;
   priority?: boolean;
 };
@@ -118,7 +118,7 @@ export default function VideoBlock({
       {near ? (
         <video
           ref={el}
-          className={`absolute inset-0 size-full object-cover transition-opacity duration-1000 ease-luxe ${
+          className={`absolute inset-0 size-full object-cover transition-opacity duration-700 ease-luxe ${
             playing ? "opacity-100" : "opacity-0"
           }`}
           muted
@@ -140,8 +140,12 @@ export default function VideoBlock({
           type="button"
           onClick={() => setUserPaused(!paused)}
           aria-label={paused ? "Play video" : "Pause video"}
-          className={`absolute bottom-5 z-10 hit-area flex size-10 items-center justify-center rounded-full border border-white/50 text-white backdrop-blur-sm transition-colors duration-500 hover:bg-white hover:text-ink md:bottom-8 ${
-            controlPosition === "bottom-right" ? "right-5 md:right-10 xl:right-16" : "left-5 md:left-10 xl:left-16"
+          className={`absolute z-10 hit-area flex size-10 items-center justify-center rounded-full border border-white/50 text-white backdrop-blur-sm transition-colors duration-500 hover:bg-white hover:text-ink ${
+            {
+              "bottom-right": "bottom-5 right-5 md:bottom-8 md:right-10 xl:right-16",
+              "bottom-left": "bottom-5 left-5 md:bottom-8 md:left-10 xl:left-16",
+              "top-right": "right-5 top-24 md:right-10 lg:top-28 xl:right-16",
+            }[controlPosition]
           }`}
         >
           {paused ? <PlayIcon className="size-4" /> : <PauseIcon className="size-4" />}

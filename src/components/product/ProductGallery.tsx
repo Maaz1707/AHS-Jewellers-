@@ -1,39 +1,40 @@
 "use client";
 
 import Image from "@/components/ui/Img";
-import { useRef, useState, type PointerEvent } from "react";
-import { useReducedMotion } from "@/lib/motion";
+import { useRef, useState } from "react";
 import { useUI } from "@/store";
-import { ExpandIcon } from "../ui/Icons";
+import { useZoom } from "@/lib/useZoom";
+import { ExpandIcon, ZoomInIcon, ZoomOutIcon } from "../ui/Icons";
 import Lightbox, { type GalleryItem } from "./Lightbox";
 
 type Props = { items: GalleryItem[]; title: string };
 
+const control =
+  "relative hit-area flex size-10 items-center justify-center rounded-full border border-line-strong bg-white/90 text-ink backdrop-blur-sm transition-colors duration-300 hover:border-ink hover:bg-ink hover:text-white";
+
 /**
- * Desktop: thumbnails beside a large frame that magnifies under the cursor.
- * Phones: a swipeable strip with a counter. Either opens the full-screen viewer.
+ * Desktop: thumbnails beside a large still frame. Nothing moves on hover:
+ * double-click zooms in at that point (the pointer then pans), double-click
+ * again zooms out; the zoom and full-screen buttons do the same for everyone.
+ * Phones: a swipeable strip with a counter; a tap opens the full-screen viewer.
  */
 export default function ProductGallery({ items, title }: Props) {
   const [index, setIndex] = useState(0);
   const lightboxOpen = useUI((s) => s.overlay === "lightbox");
   const openOverlay = useUI((s) => s.open);
   const closeOverlay = useUI((s) => s.close);
-  const reduced = useReducedMotion();
-  const zoomImg = useRef<HTMLDivElement>(null);
   const strip = useRef<HTMLDivElement>(null);
-  const [zooming, setZooming] = useState(false);
+  const zoom = useZoom(2.5);
 
-  const openViewer = (i: number) => {
+  const show = (i: number) => {
+    zoom.reset();
     setIndex(i);
-    openOverlay("lightbox");
   };
 
-  const onMove = (e: PointerEvent<HTMLButtonElement>) => {
-    if (e.pointerType !== "mouse" || !zoomImg.current) return;
-    const r = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width) * 100;
-    const y = ((e.clientY - r.top) / r.height) * 100;
-    zoomImg.current.style.transformOrigin = `${x}% ${y}%`;
+  const openViewer = (i: number) => {
+    zoom.reset();
+    setIndex(i);
+    openOverlay("lightbox");
   };
 
   const onStripScroll = () => {
@@ -55,7 +56,7 @@ export default function ProductGallery({ items, title }: Props) {
               <li key={it.src}>
                 <button
                   type="button"
-                  onClick={() => setIndex(i)}
+                  onClick={() => show(i)}
                   aria-label={`Show image ${i + 1}: ${it.label}`}
                   aria-current={i === index ? "true" : undefined}
                   className={`relative block aspect-portrait w-full overflow-hidden bg-ivory transition-opacity duration-300 ${
@@ -70,28 +71,50 @@ export default function ProductGallery({ items, title }: Props) {
           </ul>
         ) : null}
 
-        <button
-          type="button"
-          onClick={() => openViewer(index)}
-          onPointerEnter={(e) => e.pointerType === "mouse" && !reduced && setZooming(true)}
-          onPointerLeave={() => setZooming(false)}
-          onPointerMove={onMove}
-          aria-label={`Open ${title} full screen, image ${index + 1} of ${items.length}`}
-          data-cursor="View"
-          className={`group relative block aspect-portrait flex-1 overflow-hidden bg-ivory ${zooming ? "cursor-zoom-in" : ""}`}
-        >
+        <div onPointerLeave={zoom.reset} className="group relative aspect-portrait flex-1 overflow-hidden bg-ivory">
           <div
-            ref={zoomImg}
-            className="absolute inset-0 transition-transform duration-500 ease-luxe"
-            style={{ transform: zooming ? "scale(2)" : "scale(1)" }}
+            {...zoom.frame}
+            className={`absolute inset-0 select-none ${zoom.zoomed ? "cursor-zoom-out" : "cursor-zoom-in"}`}
           >
-            <Image key={current.src} src={current.src} alt={current.alt} fill priority sizes="(min-width: 1024px) 50vw, 90vw" className="object-cover [animation:menu-in_0.6s_var(--ease-luxe)]" />
+            <div className="absolute inset-0 transition-transform duration-500 ease-luxe" style={zoom.style}>
+              <Image
+                key={current.src}
+                src={current.src}
+                alt={current.alt}
+                fill
+                priority
+                draggable={false}
+                sizes="(min-width: 1024px) 50vw, 90vw"
+                className="object-cover [animation:menu-in_0.6s_var(--ease-luxe)]"
+              />
+            </div>
           </div>
-          <span className="absolute bottom-4 right-4 flex items-center gap-2 bg-white/90 px-3 py-2 eyebrow text-ink opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100">
-            <ExpandIcon className="size-4" />
-            Full screen
-          </span>
-        </button>
+
+          <p
+            aria-hidden="true"
+            className={`pointer-events-none absolute left-4 top-4 bg-white/90 px-3 py-1 text-xs text-ink-soft transition-opacity duration-300 ${
+              zoom.zoomed ? "opacity-0" : "opacity-0 group-hover:opacity-100"
+            }`}
+          >
+            Double-click to zoom
+          </p>
+
+          {/* Top corner: the frame is sticky and can run below the fold, so its foot is not always in view. */}
+          <div className="absolute right-4 top-4 flex gap-2">
+            <button
+              type="button"
+              onClick={zoom.toggle}
+              aria-pressed={zoom.zoomed}
+              aria-label={zoom.zoomed ? "Zoom out" : "Zoom in"}
+              className={control}
+            >
+              {zoom.zoomed ? <ZoomOutIcon className="size-4" /> : <ZoomInIcon className="size-4" />}
+            </button>
+            <button type="button" onClick={() => openViewer(index)} aria-label={`Open ${title} full screen, image ${index + 1} of ${items.length}`} className={control}>
+              <ExpandIcon className="size-4" />
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* ---------------- Phones ---------------- */}
@@ -123,6 +146,9 @@ export default function ProductGallery({ items, title }: Props) {
         ) : null}
         <span className="pointer-events-none absolute left-4 top-4 bg-white/90 px-2 py-1 text-micro uppercase tracking-wide text-ink">
           {current.label} · {index + 1}/{items.length}
+        </span>
+        <span className="pointer-events-none absolute bottom-4 right-4 flex size-10 items-center justify-center rounded-full bg-white/90 text-ink" aria-hidden="true">
+          <ExpandIcon className="size-4" />
         </span>
       </div>
 

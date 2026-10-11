@@ -175,6 +175,20 @@ export const ExpandIcon = (p: IconProps) => (
   </Svg>
 );
 
+export const ZoomInIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="10.5" cy="10.5" r="6.5" />
+    <path d="m15.5 15.5 5 5M10.5 7.5v6M7.5 10.5h6" />
+  </Svg>
+);
+
+export const ZoomOutIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="10.5" cy="10.5" r="6.5" />
+    <path d="m15.5 15.5 5 5M7.5 10.5h6" />
+  </Svg>
+);
+
 export const ChevronLeft = (p: IconProps) => (
   <Svg {...p}>
     <path d="m15 6-6 6 6 6" />

@@ -47,8 +47,8 @@ export default function RollingNumber({ text, className = "" }: { text: string; 
                 className="absolute inset-x-0 top-0 flex flex-col transition-transform ease-luxe"
                 style={{
                   transform: `translateY(${shown ? -n * 1.1 : 0}em)`,
-                  transitionDuration: "1400ms",
-                  transitionDelay: `${(digitCount - order) * 60}ms`,
+                  transitionDuration: "800ms",
+                  transitionDelay: `${(digitCount - order) * 30}ms`,
                 }}
               >
                 {Array.from({ length: 10 }, (_, k) => (

@@ -2,7 +2,9 @@
 
 import Image from "@/components/ui/Img";
 import Link from "next/link";
+import { useRef } from "react";
 import { collectionBySlug } from "@/data/collections";
+import { useTilt } from "@/lib/useTilt";
 import { pieceImage } from "@/lib/pieces";
 import type { Product } from "@/data/products";
 import { productPath, useProductEnquiry } from "@/lib/enquiry";
@@ -41,10 +43,12 @@ export default function ProductCard({
   const primary = pieceImage(product, 0);
   const collection = collectionBySlug(product.collection);
   const href = productPath(product);
+  const tilt = useRef<HTMLDivElement>(null);
+  useTilt(tilt);
 
   return (
     <article className={`group relative ${className}`}>
-      <div className={`relative overflow-hidden bg-ivory ${frames[frame]}`} data-cursor="View">
+      <div ref={tilt} className={`relative overflow-hidden bg-ivory ${frames[frame]}`}>
         <Link href={href} className="absolute inset-0 block" aria-label={`${product.name}, ${product.code}`}>
           {/* One soft tone under every photograph: whites take on the ivory, so mixed sources sit together. */}
           <Image
