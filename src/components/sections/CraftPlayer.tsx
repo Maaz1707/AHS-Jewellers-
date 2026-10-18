@@ -124,7 +124,7 @@ export default function CraftPlayer({ eyebrow, heading, headingId, footer, detai
                   id={`${uid}-tab-${i}`}
                   aria-selected={on}
                   aria-controls={`${uid}-panel`}
-                  aria-label={s.title}
+                  aria-label={`${s.number} ${s.title}`}
                   tabIndex={on ? 0 : -1}
                   onClick={() => choose(i)}
                   className="group flex flex-col items-start gap-3 py-2 text-left"

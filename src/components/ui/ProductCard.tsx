@@ -8,9 +8,8 @@ import { useTilt } from "@/lib/useTilt";
 import { pieceImage } from "@/lib/pieces";
 import type { Product } from "@/data/products";
 import { productPath, useProductEnquiry } from "@/lib/enquiry";
-import { formatGrams } from "@/lib/format";
 import { WhatsAppIcon } from "./Icons";
-import Price from "./Price";
+import ProductValueLockup from "./ProductValueLockup";
 import { OnlineTag } from "./Tags";
 import WishlistButton from "./WishlistButton";
 
@@ -48,7 +47,7 @@ export default function ProductCard({
 
   return (
     <article className={`group relative ${className}`}>
-      <div ref={tilt} className={`relative overflow-hidden bg-ivory ${frames[frame]}`}>
+      <div ref={tilt} className={`product-stage relative overflow-hidden ${frames[frame]}`}>
         <Link href={href} className="absolute inset-0 block" aria-label={`${product.name}, ${product.code}`}>
           {/* One soft tone under every photograph: whites take on the ivory, so mixed sources sit together. */}
           <Image
@@ -57,7 +56,7 @@ export default function ProductCard({
             fill
             sizes={sizes}
             priority={priority}
-            className="object-cover mix-blend-multiply transition-transform duration-1000 ease-luxe group-hover:scale-110"
+            className="object-cover transition-transform duration-1000 ease-luxe group-hover:scale-[1.04]"
           />
         </Link>
 
@@ -66,9 +65,7 @@ export default function ProductCard({
 
         {/* Hover and keyboard focus: purity, weight and a quiet enquiry, on larger screens. */}
         <div className="absolute inset-x-3 bottom-3 hidden translate-y-4 items-center justify-between gap-4 bg-white/95 px-4 py-3 opacity-0 backdrop-blur-sm transition-[opacity,transform] duration-700 ease-luxe group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100 md:flex">
-          <span className="text-sm text-ink-soft figures">
-            {product.purity} · {formatGrams(product.weight)}
-          </span>
+          <span className="text-sm text-ink-soft figures">{product.purity} · {product.weight} g</span>
           <a {...enquire} aria-label={`Enquire about ${product.name} on WhatsApp`} className="inline-flex items-center gap-2 eyebrow text-ink hover:text-gold-deep">
             <WhatsAppIcon className="size-4" />
             <span className="link-draw">Enquire</span>
@@ -84,17 +81,7 @@ export default function ProductCard({
           </Link>
         </h3>
         <p className="text-xs tracking-wide text-stone">{product.code}</p>
-        <p className="mt-1 flex flex-wrap items-baseline gap-x-3 text-sm text-stone">
-          <span>
-            {product.purity} · {formatGrams(product.weight)}
-          </span>
-          <span aria-hidden="true" className="hidden h-3 w-px self-center bg-line-strong lg:block" />
-          <span className="w-full text-ink lg:w-auto">
-            <span className="sr-only">Approximately </span>
-            <span aria-hidden="true">≈ </span>
-            <Price product={product} />
-          </span>
-        </p>
+        <ProductValueLockup product={product} className="mt-3" />
       </div>
     </article>
   );

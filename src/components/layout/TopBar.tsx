@@ -25,7 +25,7 @@ export default function TopBar({ transparent }: { transparent: boolean }) {
           type="button"
           onClick={() => open("rates")}
           className={`group/rate flex min-w-0 items-center gap-3 md:gap-4 ${strong}`}
-          aria-label={`Today’s gold rate: 24 karat ₹${formatNumber(rates["24K"])} per gram, 22 karat ₹${formatNumber(rates["22K"])} per gram. View all rates.`}
+          aria-label={`Gold today 24K ₹${formatNumber(rates["24K"])} 22K ₹${formatNumber(rates["22K"])} per gram. All rates.`}
         >
           <span className={`hidden eyebrow md:inline ${transparent ? "text-gold-pale" : "text-gold-deep"}`}>
             Gold today

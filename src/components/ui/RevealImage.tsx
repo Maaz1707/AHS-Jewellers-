@@ -4,7 +4,8 @@ import Image from "@/components/ui/Img";
 import { useRef } from "react";
 import { images, type ImageKey } from "@/data/media";
 import { gsap, useGSAP, MOTION } from "@/lib/gsap";
-import { prefersReducedMotion } from "@/lib/motion";
+import { useReducedMotion } from "@/lib/motion";
+import { useNearViewport } from "@/lib/useNearViewport";
 
 type Props = {
   image: ImageKey;
@@ -54,10 +55,12 @@ export default function RevealImage({
   const travel = useRef<HTMLDivElement>(null);
   const settle = useRef<HTMLDivElement>(null);
   const media = images[image];
+  const near = useNearViewport(frame);
+  const reduced = useReducedMotion();
 
   useGSAP(
     () => {
-      if (prefersReducedMotion()) return;
+      if (reduced || (!near && !immediate)) return;
       const trigger = immediate ? undefined : { trigger: frame.current, start: "top 90%", once: true };
 
       gsap.fromTo(
@@ -68,8 +71,8 @@ export default function RevealImage({
       gsap.fromTo(
         settle.current,
         // A soft reveal: the photograph settles from a slight zoom and comes into focus.
-        { scale: 1.1, filter: "blur(8px)" },
-        { scale: 1, filter: "blur(0px)", duration: MOTION.settle, delay, ease: MOTION.ease, scrollTrigger: trigger, clearProps: "filter" },
+        { scale: 1.04 },
+        { scale: 1, duration: MOTION.settle, delay, ease: MOTION.ease, scrollTrigger: trigger },
       );
 
       if (parallax > 0) {
@@ -84,7 +87,7 @@ export default function RevealImage({
         );
       }
     },
-    { scope: frame, dependencies: [parallax, from, immediate] },
+    { scope: frame, dependencies: [parallax, from, immediate, near, reduced], revertOnUpdate: true },
   );
 
   const bleed = parallax > 0 ? `${-parallax * 1.2}%` : "0%";

@@ -13,9 +13,11 @@ import { isOnline } from "@/lib/bag";
 import { useCart, useRates, useToast, useUI } from "@/store";
 import { useRateInfo } from "../layout/useRateInfo";
 import Accordion from "../ui/Accordion";
+import AhsAssurance from "../ui/AhsAssurance";
 import Button from "../ui/Button";
 import { BagIcon, CalendarIcon, ShareIcon, SparkleIcon, WhatsAppIcon } from "../ui/Icons";
 import RevealText from "../ui/RevealText";
+import ProductValueLockup from "../ui/ProductValueLockup";
 import WishlistButton from "../ui/WishlistButton";
 
 export default function ProductDetail({ product }: { product: Product }) {
@@ -97,14 +99,8 @@ export default function ProductDetail({ product }: { product: Product }) {
         <span>{formatGrams(product.weight)} gross</span>
       </p>
 
-      <p className="mt-8 font-serif text-4xl text-ink figures">
-        <span className="sr-only">Approximate price: </span>
-        <span aria-hidden="true" className="text-2xl text-stone">≈ </span>
-        {formatINR(total)}
-      </p>
-      <p className="mt-1 text-xs text-stone">
-        At today’s {product.purity} rate of {formatINR(rate)}/g{updated ? `, updated ${updated.time}` : ""}.
-      </p>
+      <ProductValueLockup product={product} className="mt-8" />
+      <p className="mt-3 text-xs text-stone">At today’s {product.purity} rate of {formatINR(rate)}/g{updated ? `, updated ${updated.time}` : ""}.</p>
 
       <p className="mt-8 text-ink-soft">{product.description}</p>
 
@@ -203,6 +199,8 @@ export default function ProductDetail({ product }: { product: Product }) {
             : "An estimate at today’s rate. The final price is confirmed in store on the day you buy, after the piece is weighed in front of you."}
         </p>
       </section>
+
+      <AhsAssurance className="mt-6" />
 
       <Accordion
         className="mt-12"

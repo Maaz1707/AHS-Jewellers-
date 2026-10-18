@@ -21,8 +21,8 @@ export default function Statement() {
       if (prefersReducedMotion()) return;
       gsap.fromTo(
         "[data-word]",
-        { opacity: 0.14 },
-        { opacity: 1, duration: 0.5, ease: "power2.out", stagger: 0.025, scrollTrigger: { trigger: root.current, start: "top 80%", once: true } },
+        { opacity: 0.72 },
+        { opacity: 1, duration: 0.5, ease: "power2.out", stagger: { amount: 0.4 }, scrollTrigger: { trigger: root.current, start: "top 80%", once: true } },
       );
     },
     { scope: root },

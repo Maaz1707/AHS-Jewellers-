@@ -58,7 +58,7 @@ export default function ProductCloseUp({ product }: { product: Product }) {
             const clamp = (v: number) => Math.max(-limit, Math.min(limit, v));
             return (
               <li key={i}>
-                <div className="relative aspect-square overflow-hidden bg-ivory">
+                <div className="product-stage relative aspect-square overflow-hidden">
                   <div
                     className="absolute inset-0"
                     style={{
@@ -80,7 +80,7 @@ export default function ProductCloseUp({ product }: { product: Product }) {
         {worn ? (
           <div className="mt-20 grid items-center gap-10 md:mt-28 lg:grid-cols-12 lg:gap-10">
             <div className="relative lg:col-span-6">
-              <div className="relative aspect-portrait overflow-hidden bg-ivory">
+              <div className="product-stage relative aspect-portrait overflow-hidden">
                 <Image src={images[worn.image].src} alt={images[worn.image].alt} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
               </div>
               <PetalCorner className="absolute -right-3 -top-3 size-16 -scale-x-100" />

@@ -71,7 +71,7 @@ export default function ProductGallery({ items, title }: Props) {
           </ul>
         ) : null}
 
-        <div onPointerLeave={zoom.reset} className="group relative aspect-portrait flex-1 overflow-hidden bg-ivory">
+        <div onPointerLeave={zoom.reset} className="product-stage group relative aspect-portrait flex-1 overflow-hidden">
           <div
             {...zoom.frame}
             className={`absolute inset-0 select-none ${zoom.zoomed ? "cursor-zoom-out" : "cursor-zoom-in"}`}
@@ -82,9 +82,10 @@ export default function ProductGallery({ items, title }: Props) {
                 src={current.src}
                 alt={current.alt}
                 fill
-                priority
+                loading="eager"
+                fetchPriority="high"
                 draggable={false}
-                sizes="(min-width: 1024px) 50vw, 90vw"
+                sizes="(min-width: 1024px) 50vw, (min-width: 768px) 90vw, 100vw"
                 className="object-cover [animation:menu-in_0.6s_var(--ease-luxe)]"
               />
             </div>
@@ -131,9 +132,9 @@ export default function ProductGallery({ items, title }: Props) {
               type="button"
               onClick={() => openViewer(i)}
               aria-label={`Open image ${i + 1} of ${items.length} full screen`}
-              className="relative aspect-portrait w-full shrink-0 snap-center bg-ivory"
+              className="product-stage relative aspect-portrait w-full shrink-0 snap-center"
             >
-              <Image src={it.src} alt={it.alt} fill priority={i === 0} sizes="100vw" className="object-cover" />
+              <Image src={it.src} alt={it.alt} fill loading={i === 0 ? "eager" : "lazy"} fetchPriority={i === 0 ? "high" : "auto"} sizes="(min-width: 1024px) 50vw, (min-width: 768px) 90vw, 100vw" className="object-cover" />
             </button>
           ))}
         </div>

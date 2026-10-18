@@ -49,7 +49,7 @@ export default function ContactPage() {
                   </span>
                   <span>
                     <span className="block eyebrow text-stone">{label}</span>
-                    <span className="mt-1 block break-all font-serif text-2xl text-ink md:break-normal">{value}</span>
+                    <span className="mt-1 block break-all font-serif text-2xl text-ink">{value}</span>
                   </span>
                 </a>
               </li>

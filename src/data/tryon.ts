@@ -24,7 +24,7 @@ export type TryOnPiece = {
 };
 
 export const tryOnPieces: TryOnPiece[] = [
-  { id: "temple-jhumka", name: "Temple Jhumka", kind: "earrings", src: "/tryon/temple-jhumka.png", productSlug: "temple-jhumka", scale: 0.27, anchor: { x: 0.5, y: 0.08 } },
+  { id: "temple-jhumka", name: "Temple Jhumka", kind: "earrings", src: "/tryon/temple-jhumka-render.png", productSlug: "temple-jhumka", scale: 0.27, anchor: { x: 0.5, y: 0.05 } },
   { id: "ruby-jhumka", name: "Ruby Jhumka", kind: "earrings", src: "/tryon/ruby-jhumka.png", productSlug: "ruby-jhumka", scale: 0.27, anchor: { x: 0.5, y: 0.08 } },
   { id: "panna-chandbali", name: "Panna Chandbali", kind: "earrings", src: "/tryon/panna-chandbali.png", productSlug: "panna-chandbali", scale: 0.3, anchor: { x: 0.5, y: 0.08 } },
   { id: "solitaire-studs", name: "Solitaire Studs", kind: "earrings", src: "/tryon/solitaire-studs.png", productSlug: "solitaire-studs", scale: 0.07, anchor: { x: 0.5, y: 0.5 } },
@@ -33,7 +33,7 @@ export const tryOnPieces: TryOnPiece[] = [
     id: "kundan-choker",
     name: "Meenakari Bridal Choker",
     kind: "necklace",
-    src: "/tryon/kundan-choker.png",
+    src: "/tryon/kundan-choker-render.png",
     productSlug: "meenakari-bridal-choker",
     alsoFor: ["neelkanth-kundan-set"],
     scale: 0.9,
@@ -53,7 +53,7 @@ export const tryOnPieces: TryOnPiece[] = [
     id: "diamond-line",
     name: "Tennis Necklace",
     kind: "necklace",
-    src: "/tryon/diamond-line.png",
+    src: "/tryon/diamond-line-render.png",
     productSlug: "tennis-necklace",
     alsoFor: ["leher-diamond-necklace"],
     scale: 0.85,

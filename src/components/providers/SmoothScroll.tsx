@@ -28,7 +28,7 @@ export default function SmoothScroll() {
   const overlay = useUI((s) => s.overlay);
 
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     // A wheel notch travels the same distance as native scrolling, and arrives
     // about as quickly: smoothing only, never slower, never snapping. Touch

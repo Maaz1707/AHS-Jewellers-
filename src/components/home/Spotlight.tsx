@@ -8,6 +8,7 @@ import { productPath, useProductEnquiry } from "@/lib/enquiry";
 import { formatGrams } from "@/lib/format";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { useLiveProduct } from "@/lib/pieces";
+import { useNearViewport } from "@/lib/useNearViewport";
 import { nearestItem, scrollToItem } from "@/lib/useDragScroll";
 import Button from "../ui/Button";
 import { Dots } from "../ui/Controls";
@@ -45,6 +46,7 @@ const LOUPE = 3.2;
  */
 export default function Spotlight() {
   const root = useRef<HTMLElement>(null);
+  const near = useNearViewport(root, "800px");
   const stage = useRef<HTMLDivElement>(null);
   const lens = useRef<HTMLDivElement>(null);
   const lensInner = useRef<HTMLDivElement>(null);
@@ -57,7 +59,7 @@ export default function Spotlight() {
   useGSAP(
     () => {
       const el = root.current;
-      if (!el) return;
+      if (!el || !near) return;
       const mm = gsap.matchMedia();
       mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
         const img = el.querySelector<HTMLElement>("[data-spot-image]");
@@ -86,7 +88,7 @@ export default function Spotlight() {
       requestAnimationFrame(() => ScrollTrigger.refresh());
       return () => mm.revert();
     },
-    { scope: root },
+    { scope: root, dependencies: [near], revertOnUpdate: true },
   );
 
   // The loupe: a round lens that follows the pointer and magnifies whatever is under it.

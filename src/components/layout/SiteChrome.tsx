@@ -12,12 +12,14 @@ import AppTabBar from "../app/AppTabBar";
 import InstallPrompt from "../app/InstallPrompt";
 import PageTransition from "../providers/PageTransition";
 import SmoothScroll from "../providers/SmoothScroll";
+import MotionLifecycle from "../providers/MotionLifecycle";
 
 /** Everything around a public page: header, footer, overlays and app chrome. */
 export default function SiteChrome({ children }: { children: ReactNode }) {
   return (
     <>
       <SmoothScroll />
+      <MotionLifecycle />
       <ScrollProgress />
       <Header />
       <PageTransition>

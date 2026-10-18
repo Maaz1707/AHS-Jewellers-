@@ -4,12 +4,11 @@ import Link from "next/link";
 import { collectionBySlug } from "@/data/collections";
 import type { Product } from "@/data/products";
 import { productPath, useProductEnquiry } from "@/lib/enquiry";
-import { formatGrams } from "@/lib/format";
 import { pieceImage } from "@/lib/pieces";
 import { WhatsAppIcon } from "./Icons";
 import Image from "./Img";
 import { PetalCorner } from "./Motif";
-import Price from "./Price";
+import ProductValueLockup from "./ProductValueLockup";
 import WishlistButton from "./WishlistButton";
 
 /**
@@ -24,7 +23,7 @@ export default function ProductFeature({ product, sizes = "(min-width: 768px) 60
 
   return (
     <article className="group relative">
-      <div className="relative aspect-landscape overflow-hidden bg-ivory">
+      <div className="product-stage relative aspect-landscape overflow-hidden">
         <Link href={href} className="absolute inset-0 block" aria-label={`${product.name}, ${product.code}`}>
           <Image src={img.src} alt={img.alt} fill sizes={sizes} className="object-cover transition-transform duration-1000 ease-luxe group-hover:scale-105" />
         </Link>
@@ -41,15 +40,9 @@ export default function ProductFeature({ product, sizes = "(min-width: 768px) 60
           </h3>
           <p className="mt-2 max-w-prose font-serif text-lg italic text-ink-soft">{line}</p>
         </div>
-        <div className="flex flex-col gap-2 text-sm text-stone md:col-span-2 md:items-end md:text-right">
-          <span className="figures">
-            {product.purity} · {formatGrams(product.weight)} · {product.code}
-          </span>
-          <span className="text-ink">
-            <span className="sr-only">Approximately </span>
-            <span aria-hidden="true">≈ </span>
-            <Price product={product} />
-          </span>
+        <div className="flex flex-col gap-2 text-sm text-stone md:col-span-2">
+          <p className="text-right text-xs tracking-wide text-stone">{product.code}</p>
+          <ProductValueLockup product={product} className="grid-cols-1 [&>div]:flex [&>div]:items-end [&>div]:justify-between" />
           <a {...enquire} className="mt-2 inline-flex items-center gap-2 eyebrow text-ink hover:text-gold-deep">
             <WhatsAppIcon className="size-4" />
             <span className="link-draw">Enquire</span>

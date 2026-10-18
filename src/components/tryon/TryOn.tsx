@@ -365,14 +365,17 @@ export default function TryOn() {
             </p>
           ) : null}
 
-          {/* Privacy, always on screen */}
-          <div className="pointer-events-none absolute inset-x-3 top-3 flex items-start justify-between gap-2">
-            <p className="flex items-center gap-2 bg-white/90 px-3 py-2 text-xs text-ink">
-              <LockIcon className="size-4 shrink-0 text-gold-deep" />
-              Nothing is recorded or uploaded
-            </p>
-            <DemoTag className="shrink-0 bg-white/90" />
-          </div>
+          {/* The opening panel states the privacy promise in full. Once the model
+              or camera is active, keep its compact version on the image itself. */}
+          {active ? (
+            <div className="pointer-events-none absolute inset-x-3 top-3 flex items-start justify-between gap-2">
+              <p className="flex items-center gap-2 bg-white/90 px-3 py-2 text-xs text-ink">
+                <LockIcon className="size-4 shrink-0 text-gold-deep" />
+                Nothing is recorded or uploaded
+              </p>
+              <DemoTag className="shrink-0 bg-white/90" />
+            </div>
+          ) : null}
         </div>
 
         {notice ? <p className="mt-4 border-l-2 border-gold bg-ivory p-4 text-sm text-ink-soft">{notice}</p> : null}
@@ -424,7 +427,7 @@ export default function TryOn() {
                   aria-pressed={on}
                   className={`group flex w-full flex-col items-stretch border p-3 text-left transition-colors ${on ? "border-ink" : "border-line hover:border-line-strong"}`}
                 >
-                  <span className="relative block aspect-square bg-ivory">
+                  <span className="product-stage relative block aspect-square">
                     <Image data-raw="" src={p.src} alt="" fill sizes="160px" className="object-contain p-3 transition-transform duration-700 ease-luxe group-hover:scale-105" />
                     {on ? <span className="absolute right-2 top-2 size-2 rounded-full bg-gold" aria-hidden="true" /> : null}
                   </span>

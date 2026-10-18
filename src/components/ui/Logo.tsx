@@ -29,7 +29,7 @@ export default function Logo({
           className={`${compact ? "h-12" : "h-10"} w-auto shrink-0 transition-transform duration-700 ease-luxe group-hover/logo:-translate-y-px md:h-12`}
         />
       ) : null}
-      <span className={`${compact ? "hidden lg:inline-flex" : "inline-flex"} flex-col items-center`}>
+      <span aria-hidden="true" className={`${compact ? "hidden lg:inline-flex" : "inline-flex"} flex-col items-center`}>
         <span className="font-serif text-2xl font-medium tracking-logo md:text-3xl" style={{ marginRight: "-0.34em" }}>
           {site.shortName}
         </span>

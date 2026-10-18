@@ -24,3 +24,13 @@ const noopSubscribe = () => () => {};
 export function useHydrated() {
   return useSyncExternalStore(noopSubscribe, () => true, () => false);
 }
+
+const subscribeVisibility = (notify: () => void) => {
+  document.addEventListener("visibilitychange", notify);
+  return () => document.removeEventListener("visibilitychange", notify);
+};
+
+/** Suspend automatic media and progress clocks in background tabs. */
+export function usePageVisible() {
+  return useSyncExternalStore(subscribeVisibility, () => !document.hidden, () => true);
+}

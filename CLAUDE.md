@@ -39,6 +39,8 @@ The project is built in 4 phases. Do only the phase you are asked to do, then st
 - Run the production build and fix all errors and warnings before reporting.
 
 ## IMPLEMENTATION NOTES (kept current by each phase)
+- Improvement Phase 1 budgets and motion tiers live in `PERFORMANCE.md`. First-screen headings render directly; below-fold reveals initialise on entry. `MotionLifecycle` pauses decorative image drift outside visible sections, and `usePageVisible` suspends automatic media/progress in hidden tabs. Touch scrolling is native. Performance targets are not yet signed off.
+- Improvement Phase 2 art direction lives in `ART-DIRECTION.md`. Use `ProductValueLockup` for the recurring purity/weight/value order and `AhsAssurance` only for the house’s weighing, hallmark/HUID and daily-rate explanation. `product-stage` is the common ivory catalogue image field. Emerald signifies house assurance and craftsmanship rather than a general UI state.
 - Design tokens (colours, type scale, spacing scale, easing) live in `src/app/globals.css` under `@theme` (Tailwind v4). Default Tailwind spacing/type scales are reset; use only the tokens defined there.
 - Motion helpers: `src/lib/gsap.ts` registers plugins once; `src/components/providers/SmoothScroll.tsx` owns Lenis. Use `useGSAP` / `gsap.context` and always revert on unmount. Check `prefersReducedMotion()` before any non-essential motion.
 - Stores: `src/store/*` (Zustand + persist). Seed data: `src/data/*`. All media URLs: `src/data/media.ts`. All business details: `src/data/site.ts`.

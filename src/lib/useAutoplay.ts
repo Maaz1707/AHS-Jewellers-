@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type CSSProperties, type RefObject } from "react";
-import { useReducedMotion } from "./motion";
+import { useReducedMotion, usePageVisible } from "./motion";
 
 type Options = {
   /** Milliseconds each item stays before the next. */
@@ -21,6 +21,7 @@ type Options = {
  */
 export function useAutoplay(root: RefObject<HTMLElement | null>, count: number, { interval }: Options) {
   const reduced = useReducedMotion();
+  const pageVisible = usePageVisible();
   const [index, setIndex] = useState(0);
   const [stopped, setStopped] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -29,7 +30,7 @@ export function useAutoplay(root: RefObject<HTMLElement | null>, count: number, 
   const [visible, setVisible] = useState(false);
 
   const enabled = !reduced && count > 1;
-  const running = enabled && !stopped && !hovered && !touching && !focused && visible;
+  const running = enabled && pageVisible && !stopped && !hovered && !touching && !focused && visible;
 
   useEffect(() => {
     const el = root.current;

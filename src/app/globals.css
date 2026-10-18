@@ -361,6 +361,15 @@
   font-variant-numeric: lining-nums tabular-nums;
 }
 
+/* Catalogue images share one quiet, ivory studio stage. The treatment holds
+   mixed photography together without pretending stock images are a real shoot. */
+@utility product-stage {
+  background-color: var(--color-ivory);
+  background-image:
+    radial-gradient(circle at 50% 38%, rgb(255 255 255 / 0.9), transparent 58%),
+    linear-gradient(135deg, transparent 48%, rgb(176 141 87 / 0.08) 48.2%, transparent 48.6%);
+}
+
 /*
  * The house motif: a jaali lattice of interlocking four-petal flowers, drawn as
  * a fine gold line. Use sparingly. Opacity is set where it is used.
@@ -811,11 +820,11 @@ html[data-intro] .hero-fade {
     }
   }
 
-  /* Elements that GSAP reveals start hidden only when motion is welcome. */
-  @media (prefers-reduced-motion: no-preference) {
-    [data-reveal] {
-      visibility: hidden;
-    }
+  /* Content remains readable before hydration and if animation cannot start. */
+  [data-reveal] { visibility: visible; }
+
+  [data-motion-running="false"] .ken-burns {
+    animation-play-state: paused !important;
   }
 
   @media (prefers-reduced-motion: reduce) {

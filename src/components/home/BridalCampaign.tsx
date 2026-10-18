@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { images, type ImageKey } from "@/data/media";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { prefersReducedMotion, useReducedMotion } from "@/lib/motion";
+import { prefersReducedMotion, useReducedMotion, usePageVisible } from "@/lib/motion";
 import { useDragScroll } from "@/lib/useDragScroll";
 import Button from "../ui/Button";
 import { PlayPause } from "../ui/Controls";
@@ -41,9 +41,11 @@ function Frame({ image, caption, hidden = false }: { image: ImageKey; caption: s
  */
 function Lookbook() {
   const reduced = useReducedMotion();
+  const pageVisible = usePageVisible();
   const wrap = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLUListElement>(null);
   const still = useRef<HTMLUListElement>(null);
+  const position = useRef(0);
   const [stopped, setStopped] = useState(false);
   const stoppedRef = useRef(stopped);
   useEffect(() => {
@@ -54,8 +56,8 @@ function Lookbook() {
   useEffect(() => {
     const box = wrap.current;
     const el = track.current;
-    if (reduced || !box || !el) return;
-    let x = 0;
+    if (reduced || !pageVisible || !box || !el || stopped) return;
+    let x = position.current;
     let last = performance.now();
     let raf = 0;
     let hover = false;
@@ -63,13 +65,18 @@ function Lookbook() {
     let seen = false;
     let drag: { start: number; x0: number; moved: boolean } | null = null;
 
-    const half = () => el.scrollWidth / 2;
+    let width = el.scrollWidth / 2;
+    const resize = new ResizeObserver(() => { width = el.scrollWidth / 2; });
+    resize.observe(el);
+    const half = () => width;
     const place = () => {
       const h = half();
       if (h > 0) x = ((x % h) - h) % h;
       el.style.transform = `translate3d(${x}px, 0, 0)`;
     };
     const tick = (now: number) => {
+      raf = 0;
+      if (!seen || hover || focus || stoppedRef.current) return;
       const dt = Math.min(64, now - last) / 1000;
       last = now;
       if (!drag && !hover && !focus && seen && !stoppedRef.current) {
@@ -78,23 +85,31 @@ function Lookbook() {
       }
       raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
+    const resume = () => {
+      if (!raf && seen && !hover && !focus && !stoppedRef.current) {
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
+    };
 
     const io = new IntersectionObserver(([e]) => {
       seen = e.isIntersecting;
+      if (seen) resume();
+      else { cancelAnimationFrame(raf); raf = 0; }
     });
     io.observe(box);
     const enter = (e: PointerEvent) => {
       if (e.pointerType === "mouse") hover = true;
     };
     const leave = (e: PointerEvent) => {
-      if (e.pointerType === "mouse") hover = false;
+      if (e.pointerType === "mouse") { hover = false; resume(); }
     };
     const focusIn = () => {
       focus = true;
     };
     const focusOut = () => {
       focus = false;
+      resume();
     };
     const down = (e: PointerEvent) => {
       if (e.pointerType === "mouse" && e.button !== 0) return;
@@ -121,8 +136,10 @@ function Lookbook() {
     window.addEventListener("pointerup", up);
     window.addEventListener("pointercancel", up);
     return () => {
+      position.current = x;
       cancelAnimationFrame(raf);
       io.disconnect();
+      resize.disconnect();
       box.removeEventListener("pointerenter", enter);
       box.removeEventListener("pointerleave", leave);
       box.removeEventListener("focusin", focusIn);
@@ -132,7 +149,7 @@ function Lookbook() {
       window.removeEventListener("pointerup", up);
       window.removeEventListener("pointercancel", up);
     };
-  }, [reduced]);
+  }, [reduced, pageVisible, stopped]);
 
   if (reduced) {
     return (

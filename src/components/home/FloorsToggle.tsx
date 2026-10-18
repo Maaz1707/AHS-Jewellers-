@@ -50,7 +50,7 @@ export default function FloorsToggle() {
                     type="button"
                     onClick={() => setIndex(i)}
                     aria-pressed={on}
-                    aria-label={floorName(fl)}
+                    aria-label={`${fl.floor}, ${floorName(fl)}`}
                     className={`relative flex size-12 items-center justify-center rounded-full border font-serif text-xl transition-[color,background-color,border-color,box-shadow] duration-300 ${
                       on
                         ? "border-gold bg-ink text-gold-pale ring-3 ring-gold-pale"

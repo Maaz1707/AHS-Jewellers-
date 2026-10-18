@@ -3,7 +3,7 @@
 import Image from "@/components/ui/Img";
 import { useEffect, useRef, useState } from "react";
 import { videos, type MediaVideo, type VideoKey } from "@/data/media";
-import { useReducedMotion } from "@/lib/motion";
+import { useReducedMotion, usePageVisible } from "@/lib/motion";
 import { PauseIcon, PlayIcon } from "./Icons";
 
 type Props = {
@@ -22,7 +22,7 @@ type Props = {
 
 /**
  * Muted, looping, inline background video with a poster image underneath.
- * Off-screen videos never download; on-screen ones pause when scrolled away.
+ * Videos load near the viewport; on-screen ones pause when scrolled away.
  * With reduced motion the poster is shown and playback waits for the user.
  */
 const POSITIONED = /(^|\s)(absolute|fixed)(\s|$)/;
@@ -41,6 +41,7 @@ export default function VideoBlock({
   const wrap = useRef<HTMLDivElement>(null);
   const el = useRef<HTMLVideoElement>(null);
   const reduced = useReducedMotion();
+  const pageVisible = usePageVisible();
   const [near, setNear] = useState(false);
   const [inView, setInView] = useState(eager);
   const [playing, setPlaying] = useState(false);
@@ -68,9 +69,11 @@ export default function VideoBlock({
   useEffect(() => {
     const node = wrap.current;
     if (!node) return;
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const saveData = connection?.saveData || /(^|-)(2g|3g)$/.test(connection?.effectiveType ?? "");
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !eager) setNear(true);
+        if (entry.isIntersecting && !eager && !saveData) setNear(true);
       },
       { rootMargin: "400px 0px" },
     );
@@ -84,8 +87,9 @@ export default function VideoBlock({
   }, [eager]);
 
   // Reduced motion: paused unless the user presses play.
-  const paused = userPaused ?? reduced;
-  const shouldPlay = near && inView && active && !paused;
+  const paused = userPaused ?? (reduced || !near);
+  const shouldLoad = near && active && (!reduced || userPaused === false);
+  const shouldPlay = shouldLoad && pageVisible && inView && !paused;
 
   useEffect(() => {
     const v = el.current;
@@ -96,7 +100,7 @@ export default function VideoBlock({
     } else {
       v.pause();
     }
-  }, [shouldPlay, near]);
+  }, [shouldPlay, shouldLoad, near]);
 
   const posterSrc = data.poster;
 
@@ -115,7 +119,7 @@ export default function VideoBlock({
         priority={priority}
         className="object-cover"
       />
-      {near ? (
+      {shouldLoad ? (
         <video
           ref={el}
           className={`absolute inset-0 size-full object-cover transition-opacity duration-700 ease-luxe ${
@@ -138,7 +142,7 @@ export default function VideoBlock({
       {control ? (
         <button
           type="button"
-          onClick={() => setUserPaused(!paused)}
+          onClick={() => { setNear(true); setUserPaused(!paused); }}
           aria-label={paused ? "Play video" : "Pause video"}
           className={`absolute z-10 hit-area flex size-10 items-center justify-center rounded-full border border-white/50 text-white backdrop-blur-sm transition-colors duration-500 hover:bg-white hover:text-ink ${
             {
